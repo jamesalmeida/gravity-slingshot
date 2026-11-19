@@ -1,66 +1,121 @@
-// Tiny WebAudio synth. Off until the player turns it on.
+// Procedural WebAudio synthesizer, off until the player turns it on.
 (function (root) {
   'use strict';
 
-  let ctx = null;
-  let master = null;
-  let enabled = false;
+  const SoundEngine = (() => {
+    let ctx = null;
+    let enabled = false;
 
-  function ensure() {
-    if (ctx) return true;
-    const AC = root.AudioContext || root.webkitAudioContext;
-    if (!AC) return false;
-    ctx = new AC();
-    master = ctx.createGain();
-    master.gain.value = 0.18;
-    master.connect(ctx.destination);
-    return true;
-  }
-
-  function tone(freq, start, dur, type, peak, glideTo) {
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    osc.type = type || 'sine';
-    osc.frequency.setValueAtTime(freq, start);
-    if (glideTo) osc.frequency.exponentialRampToValueAtTime(glideTo, start + dur);
-    g.gain.setValueAtTime(0.0001, start);
-    g.gain.exponentialRampToValueAtTime(peak || 0.5, start + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
-    osc.connect(g);
-    g.connect(master);
-    osc.start(start);
-    osc.stop(start + dur + 0.02);
-  }
-
-  function play(fn) {
-    if (!enabled || !ensure()) return;
-    if (ctx.state === 'suspended') ctx.resume();
-    fn(ctx.currentTime);
-  }
-
-  const PENTA = [392, 440, 523.25, 587.33, 659.25, 783.99];
-
-  const Sound = {
-    get enabled() { return enabled; },
-    setEnabled(on) {
-      enabled = on;
-      if (on && ensure() && ctx.state === 'suspended') ctx.resume();
-    },
-    tick() { play((t) => tone(880, t, 0.04, 'square', 0.12)); },
-    launch(power) { play((t) => tone(140 + power * 160, t, 0.32, 'triangle', 0.6, 520 + power * 300)); },
-    beacon(i) {
-      play((t) => {
-        const f = PENTA[Math.min(i, PENTA.length - 1)];
-        tone(f, t, 0.35, 'sine', 0.6);
-        tone(f * 2, t + 0.05, 0.25, 'sine', 0.2);
-      });
-    },
-    crash() { play((t) => tone(180, t, 0.5, 'sawtooth', 0.5, 40)); },
-    lost() { play((t) => tone(330, t, 0.45, 'sine', 0.3, 160)); },
-    win() {
-      play((t) => [0, 2, 4, 5].forEach((n, k) => tone(PENTA[n], t + k * 0.09, 0.5, 'triangle', 0.45)));
+    function ensureContext() {
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) ctx = new AC();
+      }
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
     }
-  };
 
-  root.Sound = Sound;
-})(typeof self !== 'undefined' ? self : this);
+    function setEnabled(val) {
+      enabled = val;
+      if (enabled) {
+        ensureContext();
+        playClick(520, 0.04);
+      }
+    }
+
+    function isEnabled() {
+      return enabled;
+    }
+
+    function playClick(freq = 440, dur = 0.035) {
+      if (!enabled || !ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.0008, now + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + dur);
+    }
+
+    function playLaunch(speedRatio) {
+      if (!enabled || !ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      const base = 180 + speedRatio * 140;
+      osc.frequency.setValueAtTime(base, now);
+      osc.frequency.exponentialRampToValueAtTime(base * 2.1, now + 0.24);
+      gain.gain.setValueAtTime(0.11, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    }
+
+    function playRelayLock(index) {
+      if (!enabled || !ctx) return;
+      const now = ctx.currentTime;
+      const scale = [523.25, 659.25, 783.99, 1046.5];
+      const freq = scale[Math.min(index, scale.length - 1)];
+      [1, 1.5].forEach((mult, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = idx === 0 ? 'sine' : 'triangle';
+        osc.frequency.setValueAtTime(freq * mult, now + idx * 0.04);
+        gain.gain.setValueAtTime(idx === 0 ? 0.12 : 0.05, now + idx * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.55);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + idx * 0.04);
+        osc.stop(now + 0.58);
+      });
+    }
+
+    function playSectorComplete() {
+      if (!enabled || !ctx) return;
+      const now = ctx.currentTime;
+      const chord = [523.25, 659.25, 783.99, 987.77, 1046.5];
+      chord.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        const t = now + i * 0.075;
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.08, t);
+        gain.gain.exponentialRampToValueAtTime(0.0008, t + 0.65);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.68);
+      });
+    }
+
+    function playImpact() {
+      if (!enabled || !ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.exponentialRampToValueAtTime(38, now + 0.32);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    }
+
+    return { setEnabled, isEnabled, playClick, playLaunch, playRelayLock, playSectorComplete, playImpact };
+  })();
+
+  root.SoundEngine = SoundEngine;
+})(window);

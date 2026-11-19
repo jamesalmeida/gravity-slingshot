@@ -2,7 +2,7 @@
   "name": "gravity-slingshot",
   "version": "1.0.0",
   "private": true,
-  "description": "A one-shot orbital puzzle: slingshot a probe through gravity wells to light every beacon.",
+  "description": "Voyager Slingshot: an 8-sector orbital mechanics puzzle with a live symplectic trajectory predictor.",
   "scripts": {
     "check": "node tools/check-levels.js",
     "check:fine": "node tools/check-levels.js --fine",
