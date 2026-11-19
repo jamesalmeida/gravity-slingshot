@@ -28,6 +28,7 @@ const FIRST_ID = 9; // sectors 1-8 are the handcrafted originals in src/sectors.
 //   frames    when the intended path reaches its last relay (the predictor shows 310 frames)
 //   tol       least aiming error the intended launch must forgive: [degrees, px/s]
 //   winTurn   every winning launch must turn at least this much (no straight shots)
+//   decoys    the arc may add one decoy to a sector: a body the route never swings by (see addDecoy)
 //   band      share of all launches that win, first sector of the arc -> last
 // ---------------------------------------------------------------------------------------------
 const ARCS = [
@@ -65,7 +66,7 @@ const ARCS = [
     name: 'NARROW BEACONS', count: 10, note: 'Relays shrink to 70% of their usual radius.',
     kinds: [['star', 'giant'], ['star', 'planet', 'giant'], ['giant', 'hazard'], ['star', 'giant', 'hazard'], ['star', 'repulsor', 'planet']],
     relays: [2, 3], relayR: 17, turns: [[80, 150], [150, 300], [300, 460]], frames: [100, 300], tol: [1.25, 14], winTurn: 40,
-    band: [0.36, 0.09], flips: 'vh'
+    decoys: true, band: [0.36, 0.09], flips: 'vh'
   },
   {
     name: 'BLIND TRANSFERS', count: 10, note: 'The last relay lies past the end of the predictor.',
@@ -74,18 +75,18 @@ const ARCS = [
     blind: true, band: [0.5, 0.1], flips: 'vh'
   },
   {
-    name: 'CROWDED SKIES', count: 10, note: 'Four and five bodies, every one of them in the way.',
+    name: 'CROWDED SKIES', count: 10, note: 'Four and five bodies, and not all of them are part of the route.',
     kinds: [['star', 'giant', 'planet', 'hazard'], ['star', 'giant', 'repulsor', 'planet'], ['giant', 'star', 'hazard', 'repulsor'],
       ['star', 'giant', 'planet', 'planet', 'hazard'], ['star', 'planet', 'giant', 'repulsor', 'hazard']],
     relays: [3], relayR: 22, turns: [[100, 180], [180, 340], [340, 600]], frames: [120, 420], tol: [1.25, 12], winTurn: 45,
-    crowded: true, band: [0.26, 0.07], flips: 'vh'
+    crowded: true, decoys: true, band: [0.26, 0.07], flips: 'vh'
   },
   {
     name: 'GRAND TOURS', count: 10, note: 'Everything at once: many bodies, small relays, long flights.',
     kinds: [['star', 'giant', 'planet', 'hazard'], ['star', 'giant', 'giant', 'repulsor'], ['giant', 'star', 'planet', 'hazard', 'repulsor'],
       ['star', 'star', 'giant', 'planet', 'hazard']],
     relays: [3, 4, 4], relayR: 19, turns: [[140, 260], [260, 900]], frames: [160, 620], tol: [1, 10], winTurn: 60,
-    crowded: true, band: [0.14, 0.035], flips: 'vh'
+    crowded: true, decoys: true, band: [0.14, 0.035], flips: 'vh'
   }
 ];
 
@@ -246,6 +247,106 @@ function flip(sector, angle, horizontal, vertical) {
   return { sector: out, angle: a };
 }
 
+// Gates on the route the recorded launch flies: not too long, and on screen throughout.
+function routeOk(spec, flown, path) {
+  if (flown.result !== 'complete' || flown.frames > spec.frames[1] + 25) return false;
+  for (let i = 0; i < path.length; i += 3) {
+    if (path[i] < -40 || path[i] > W + 40 || path[i + 1] < -20 || path[i + 1] > H + 20) return false;
+  }
+  return true;
+}
+
+// Bodies the launch does not need: it still wins with the body taken away.
+function spareBodies(sector, angle, speed) {
+  const spare = [];
+  for (let i = 0; i < sector.bodies.length; i++) {
+    if (sector.bodies[i].decoy) continue;
+    const without = { ...sector, bodies: sector.bodies.filter((_, j) => j !== i) };
+    if (A.wins(without, angle, speed)) spare.push(i);
+  }
+  return spare;
+}
+
+// Re-centre a winning launch in its win window, check it forgives enough, and round it.
+function settle(sector, spec, angle0, speed0) {
+  let angle = angle0;
+  let speed = speed0;
+  let tol = A.tolerance(sector, angle, speed);
+  for (let i = 0; i < 2 && tol; i++) {
+    angle = tol.midAngle;
+    speed = tol.midSpeed;
+    tol = A.tolerance(sector, angle, speed);
+  }
+  if (!tol || tol.angTol < spec.tol[0] || tol.spdTol < spec.tol[1]) return null;
+  angle = Math.round(norm360(angle) * 10) / 10;
+  speed = Math.round(speed);
+  if (![[0, 0], [0.3, 0], [-0.3, 0], [0, 3], [0, -3]].every(([da, ds]) => A.wins(sector, angle + da, speed + ds))) return null;
+  return { angle, speed, tol };
+}
+
+// A decoy is a body to steer clear of, not one to slingshot around. It is added to a sector that
+// already works, and it must be a fair obstacle rather than an annoyance:
+//   - it looks like the real bodies: an attractor just as heavy
+//   - it is near the route (within DECOY_REACH px of it, and of a relay), so it is worth noticing
+//   - the route never flies by it: it stays DECOY_CLEAR px off the surface
+//   - it is not needed: the route was found without it, and with it in place the winning launch
+//     has moved by no more than a small aim correction (A.NEAR_ANGLE degrees, A.NEAR_SPEED px/s)
+//   - it costs little: the solution keeps at least 60% of the aiming margin it had before
+const DECOY_CLEAR = 55;
+const DECOY_REACH = 220;
+function addDecoy(rng, spec, sector, solved) {
+  const shrink = spec.crowded ? 0.86 : 1;
+  const gap = spec.crowded ? 95 : 120;
+  const R = spec.relayR;
+  const before = A.launch(sector, solved.angle, solved.speed);
+
+  for (let t = 0; t < 60; t++) {
+    const type = pick(rng, ['star', 'giant', 'giant', 'hazard']);
+    const k = BODY[type];
+    const r = Math.round(between(rng, k.r[0], k.r[1]) * shrink);
+    const mass = Math.max(105, snap(between(rng, k.mass[0], k.mass[1]) * (shrink + (1 - shrink) * 0.5)));
+    // Somewhere within reach of a relay.
+    const relay = pick(rng, sector.relays);
+    const dir = rng() * Math.PI * 2;
+    const dist = between(rng, r + R + 60, 300);
+    const x = snap(relay.x + Math.cos(dir) * dist);
+    const y = snap(relay.y + Math.sin(dir) * dist);
+    const body = { x, y, r, mass, type };
+    if (x < r + 45 || x > W - r - 45 || y < r + 45 || y > H - r - 60) continue;
+    if (Math.hypot(x - sector.probe.x, y - sector.probe.y) < r + 190) continue;
+    if (sector.bodies.some((o) => Math.hypot(x - o.x, y - o.y) < r + o.r + gap || labelsClash(body, o))) continue;
+    if (sector.relays.some((q) => Math.hypot(x - q.x, y - q.y) < r + R + 18 || circleHitsBox(q.x, q.y, R + 3, labelBox(body)))) continue;
+    if (A.clearance(sector, solved.angle, solved.speed, body) < DECOY_CLEAR + 15) continue;
+
+    if (type === 'giant' && rng() < 0.45) {
+      body.ring = true;
+      body.tilt = Math.round(between(rng, 0.2, 0.34) * (rng() < 0.5 ? -1 : 1) * 100) / 100;
+    }
+    body.decoy = true;
+    const withDecoy = { ...sector, bodies: [...sector.bodies, body] };
+
+    // The same route must survive: a win near the old launch, still forgiving, still the same shape.
+    const near = A.nearestWin(withDecoy, solved.angle, solved.speed);
+    if (!near) continue;
+    const next = settle(withDecoy, spec, near.angle, near.speed);
+    if (!next) continue;
+    let turned = Math.abs(next.angle - solved.angle);
+    if (turned > 180) turned = 360 - turned;
+    if (turned > A.NEAR_ANGLE || Math.abs(next.speed - solved.speed) > A.NEAR_SPEED) continue;
+    const path = [];
+    const flown = A.launch(withDecoy, next.angle, next.speed, path);
+    if (!routeOk(spec, flown, path)) continue;
+    if (Math.abs(flown.frames - before.frames) > before.frames * 0.25 || Math.abs(flown.turn - before.turn) > before.turn * 0.3) continue;
+    const clear = A.clearance(withDecoy, next.angle, next.speed, body);
+    if (clear < DECOY_CLEAR || clear > DECOY_REACH) continue;
+    if (next.tol.angTol < solved.tol.angTol * 0.6 || next.tol.spdTol < solved.tol.spdTol * 0.6) continue;
+    // Everything else must still be essential.
+    if (spareBodies(withDecoy, next.angle, next.speed).length) continue;
+    return { sector: withDecoy, solved: next };
+  }
+  return null;
+}
+
 // ---------------------------------------------------------------------------------------------
 // Steps 3-5: one attempt at a sector, with every quality gate
 // ---------------------------------------------------------------------------------------------
@@ -270,34 +371,32 @@ function attempt(spec, rng, stats) {
     stats.placed++;
 
     const flipped = flip({ probe, bodies, relays }, angle0, flipH, flipV);
-    const sector = flipped.sector;
 
-    // Gate: the launch must forgive aiming error. Re-centre it in its win window first.
-    let angle = flipped.angle;
-    let speed = speed0;
-    let tol = A.tolerance(sector, angle, speed);
-    for (let i = 0; i < 2 && tol; i++) {
-      angle = tol.midAngle;
-      speed = tol.midSpeed;
-      tol = A.tolerance(sector, angle, speed);
-    }
-    if (!tol || tol.angTol < spec.tol[0] || tol.spdTol < spec.tol[1]) continue;
-    angle = Math.round(norm360(angle) * 10) / 10;
-    speed = Math.round(speed);
-    if (![[0, 0], [0.3, 0], [-0.3, 0], [0, 3], [0, -3]].every(([da, ds]) => A.wins(sector, angle + da, speed + ds))) continue;
+    // Gate: the launch must forgive aiming error. It is re-centred in its win window first.
+    let sector = flipped.sector;
+    let solved = settle(sector, spec, flipped.angle, speed0);
+    if (!solved) continue;
     stats.tolerant++;
 
-    // Gate: no decorative wells. Taking a body away must break the solution
-    // (sectors with four or more bodies may keep one as a pure obstacle).
-    let idle = 0;
-    for (let i = 0; i < sector.bodies.length; i++) {
-      const without = { ...sector, bodies: sector.bodies.filter((_, j) => j !== i) };
-      const stillWins = A.wins(without, angle, speed);
-      if (stillWins) idle++;
-      if (stillWins && sector.bodies[i].type === spec.needs) idle = 99;
-    }
-    if (idle > (sector.bodies.length >= 4 ? 1 : 0)) continue;
+    // Gate: re-centring must not have slid the launch onto a different, much longer route
+    // or off the screen.
+    const path = [];
+    if (!routeOk(spec, A.launch(sector, solved.angle, solved.speed, path), path)) continue;
+
+    // Gate: every body earns its place. Taking any one away must break the solution.
+    if (spareBodies(sector, solved.angle, solved.speed).length) continue;
     stats.essential++;
+
+    // In the decoy arcs, most sectors then get one body to steer clear of.
+    if (spec.decoys && rng() < 0.75) {
+      const decoyed = addDecoy(rng, spec, sector, solved);
+      if (decoyed) {
+        sector = decoyed.sector;
+        solved = decoyed.solved;
+        stats.decoyed++;
+      }
+    }
+    const { angle, speed, tol } = solved;
 
     // Gate: the whole launch space. No near-straight winners, and for blind sectors the
     // predictor must not be able to confirm a win.
@@ -308,20 +407,13 @@ function attempt(spec, rng, stats) {
     if (sw.minTurn < spec.winTurn) continue;
     if (spec.blind && sw.visibleShare > 0.02) continue;
 
-    // Gate: re-centring must not have slid the launch onto a different, much longer route.
-    // or off the screen.
-    const finalPath = [];
-    const flownFinal = A.launch(sector, angle, speed, finalPath);
-    if (flownFinal.frames > spec.frames[1] + 25) continue;
-    let offScreen = false;
-    for (let i = 0; i < finalPath.length && !offScreen; i += 3) {
-      offScreen = finalPath[i] < -40 || finalPath[i] > W + 40 || finalPath[i + 1] < -20 || finalPath[i + 1] > H + 20;
-    }
-    if (offScreen) continue;
+    const flownFinal = A.launch(sector, angle, speed);
+    const decoy = sector.bodies.findIndex((b) => b.decoy);
     return {
       sector,
       solution: { angle, speed },
       turnClass,
+      decoy,
       stats: {
         winPct: sw.winPct,
         visibleShare: sw.visibleShare,
@@ -343,7 +435,7 @@ function attempt(spec, rng, stats) {
 if (!isMainThread) {
   parentPort.on('message', ({ arc, from, to }) => {
     const out = [];
-    const stats = { placed: 0, tolerant: 0, essential: 0 };
+    const stats = { placed: 0, tolerant: 0, essential: 0, decoyed: 0 };
     for (let i = from; i < to; i++) {
       const cand = attempt(ARCS[arc], rngFor(workerData.seed, arc, i), stats);
       if (cand) out.push({ ...cand, attempt: i });
@@ -394,7 +486,7 @@ function describe(cand, spec, rng) {
       if (d < best) { best = d; at = f; }
     }
     return { b, at, clear: best };
-  }).sort((p, q) => p.at - q.at);
+  }).filter((p) => sector.bodies.indexOf(p.b) !== cand.decoy).sort((p, q) => p.at - q.at);
 
   const lastRelay = sector.relays[sector.relays.length - 1];
   const cameBack = stats.turn >= 150 && Math.hypot(lastRelay.x - sector.probe.x, lastRelay.y - sector.probe.y) < 420;
@@ -424,20 +516,23 @@ function describe(cand, spec, rng) {
     brief = `BANK OFF REPULSOR ${repulsor.b.label} TO LOCK ${relayWords}`;
   } else if (kind === 'hazard') {
     brief = `SKIM SINGULARITY ${hazard.b.label} FOR A ${deg} TURN ONTO ${relayWords}`;
+  } else if (kind === 'narrow') {
+    // Briefs in the decoy arcs never list the route body by body: that would give the decoy away.
+    brief = `NARROW BEACONS: ${deg} OF TURN TO LOCK ${relayWords}, NO MARGIN`;
+  } else if (spec.decoys) {
+    brief = `IN PAST ${names[0]}, OUT BY ${names[names.length - 1]}: ${deg} OF TURN, ${n} RELAYS`;
   } else if (sector.bodies.length === 1) {
     brief = stats.turn >= 300
       ? `FLY A FULL LOOP AROUND ${names[0]} TO LOCK ${relayWords}`
       : `SWING ${deg} AROUND ${names[0]} TO LOCK ${relayWords}`;
   } else if (sector.bodies.length === 2) {
     brief = `BEND PAST ${names[0]}, THEN WHIP AROUND ${names[1]} FOR ${relayWords}`;
-  } else if (kind === 'narrow') {
-    brief = `NARROW BEACONS: ${deg} OF TURN THROUGH ${names.length} WELLS, NO MARGIN`;
   } else if (sector.bodies.length === 3) {
     brief = `CHAIN ${names.join(' > ')} TO LOCK ${relayWords}`;
   } else {
     brief = `IN PAST ${names[0]}, OUT BY ${names[names.length - 1]}: ${deg} OF TURN, ${n} RELAYS`;
   }
-  if (brief.length > 66) brief = `${deg} OF TURN ACROSS ${names.length} BODIES TO LOCK ${relayWords}`;
+  if (brief.length > 66) brief = `${deg} OF TURN IN ONE ARC TO LOCK ${relayWords}`;
   return { kind, brief };
 }
 
@@ -470,7 +565,7 @@ function parseArgs() {
 
 async function buildPools(opts) {
   const BATCH = 4;
-  const arcs = ARCS.map(() => ({ batches: new Map(), next: 0, pool: null, stats: { placed: 0, tolerant: 0, essential: 0, attempts: 0 } }));
+  const arcs = ARCS.map(() => ({ batches: new Map(), next: 0, pool: null, stats: { placed: 0, tolerant: 0, essential: 0, decoyed: 0, attempts: 0 } }));
   const workers = Array.from({ length: opts.jobs }, () => new Worker(__filename, { workerData: { seed: opts.seed } }));
 
   const settle = (arcIdx) => {
@@ -504,7 +599,7 @@ async function buildPools(opts) {
       const state = arcs[arc];
       state.batches.set(from / BATCH, out);
       state.stats.attempts += BATCH;
-      for (const k of ['placed', 'tolerant', 'essential']) state.stats[k] += stats[k];
+      for (const k of ['placed', 'tolerant', 'essential', 'decoyed']) state.stats[k] += stats[k];
       if (!state.pool) {
         settle(arc);
         if (state.pool) process.stderr.write(`  pool ready: ${ARCS[arc].name}\n`);
@@ -532,11 +627,13 @@ function selectArc(spec, pool) {
     if (!free.length) break;
     const gaps = free.map((c) => Math.abs(Math.log10(c.stats.winPct) - target));
     const bestGap = Math.min(...gaps);
-    // Among near-equal fits, take the path shape (gentle / hairpin / loop) used least so far.
+    // Among near-equal fits, take the path shape (gentle / hairpin / loop) used least so far, and
+    // in the decoy arcs keep sectors with and without a decoy in balance.
     let best = -1;
     free.forEach((c, i) => {
-      if (gaps[i] > bestGap + 0.07) return;
-      const used = chosen.filter((o) => o.turnClass === c.turnClass).length;
+      if (gaps[i] > bestGap + (spec.decoys ? 0.12 : 0.07)) return;
+      const used = chosen.filter((o) => o.turnClass === c.turnClass).length +
+        (spec.decoys ? 3 * chosen.filter((o) => (o.decoy >= 0) === (c.decoy >= 0)).length : 0);
       if (best < 0 || used < free[best].used || (used === free[best].used && gaps[i] < gaps[best])) {
         c.used = used;
         best = i;
@@ -560,7 +657,7 @@ function hintFor(cand, t, rng) {
 
 function formatSector(s) {
   const body = (b) => {
-    const extra = b.ring ? `, ring: true, tilt: ${b.tilt}` : '';
+    const extra = (b.ring ? `, ring: true, tilt: ${b.tilt}` : '') + (b.decoy ? ', decoy: true' : '');
     return `        { x: ${b.x}, y: ${b.y}, r: ${b.r}, mass: ${b.mass}, type: '${b.type}'${extra}, label: '${b.label}' }`;
   };
   const relay = (r) => `        { x: ${r.x}, y: ${r.y}, r: ${r.r}, code: '${r.code}' }`;
@@ -610,7 +707,7 @@ async function main() {
     const pcts = pool.map((c) => c.stats.winPct).sort((a, b) => b - a);
     process.stderr.write(
       `${spec.name.padEnd(16)} pool ${String(pool.length).padStart(3)} from ${stats.attempts} attempts ` +
-      `(placed ${stats.placed}, tolerant ${stats.tolerant}, essential ${stats.essential})  win% ` +
+      `(placed ${stats.placed}, tolerant ${stats.tolerant}, essential ${stats.essential}, with decoy ${pool.filter((c) => c.decoy >= 0).length})  win% ` +
       `${pcts.length ? `${pcts[0].toFixed(2)} .. ${pcts[Math.floor(pcts.length / 2)].toFixed(2)} .. ${pcts[pcts.length - 1].toFixed(3)}` : '-'}\n`
     );
     const chosen = selectArc(spec, pool);
@@ -634,7 +731,7 @@ async function main() {
         relays: cand.sector.relays
       };
       sectors.push(sector);
-      rows.push({ sector, stats: cand.stats });
+      rows.push({ sector, stats: cand.stats, decoy: cand.decoy });
       id++;
     });
   });
@@ -669,7 +766,7 @@ async function main() {
   rows.forEach((r) => {
     const s = r.stats;
     process.stderr.write(
-      `${String(r.sector.id).padStart(3, '0')} ${r.sector.name.padEnd(28)} ${r.sector.bodies.length}b ${r.sector.relays.length}r ` +
+      `${String(r.sector.id).padStart(3, '0')} ${r.sector.name.padEnd(28)} ${r.sector.bodies.length}b${r.decoy >= 0 ? '*' : ' '}${r.sector.relays.length}r ` +
       `win ${s.winPct.toFixed(3).padStart(6)}%  vis ${s.visibleShare.toFixed(2)}  tol ${s.angTol.toFixed(2)}°/${s.spdTol.toFixed(0)}  ` +
       `turn ${String(Math.round(s.turn)).padStart(3)}°  frames ${String(s.frames).padStart(3)}  D ${s.difficulty.toFixed(2)}\n`
     );

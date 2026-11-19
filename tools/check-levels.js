@@ -72,6 +72,21 @@ function quickProblems(sector, idx) {
     if (!nudges.every(([da, ds]) => A.wins(sector, angle + da, speed + ds))) {
       problems.push('recorded solution is knife-edge: a 0.3° or 3 px/s nudge loses');
     }
+    // Every body is either essential (the solution fails without it) or a declared decoy
+    // (the route never flies by it, and survives its removal with a small aim correction).
+    sector.bodies.forEach((b, i) => {
+      const without = { ...sector, bodies: sector.bodies.filter((_, j) => j !== i) };
+      if (!b.decoy) {
+        if (A.wins(without, angle, speed)) problems.push(`${b.label} does nothing: the solution wins without it`);
+        return;
+      }
+      const clear = A.clearance(sector, angle, speed, b);
+      if (clear < 55) problems.push(`decoy ${b.label} is flown by: the route is using it`);
+      if (clear > 220) problems.push(`decoy ${b.label} is nowhere near the route`);
+      if (!A.nearestWin(without, angle, speed)) problems.push(`decoy ${b.label} is needed: the route does not survive without it`);
+      if (!(b.mass >= 105)) problems.push(`decoy ${b.label} is too light to look like part of the route`);
+      if (Math.min(...sector.relays.map((r) => Math.hypot(r.x - b.x, r.y - b.y))) > 305) problems.push(`decoy ${b.label} is not near any relay`);
+    });
   }
   return problems;
 }
@@ -103,6 +118,7 @@ function writeReport(file, rows) {
     '- **Seen**: share of those wins the on-screen predictor shows to the end (it looks 310 frames ahead).',
     '- **Forgives**: aiming error the recorded solution tolerates, as an unbroken range of azimuth and of launch speed.',
     '- **Turn**: how far the recorded solution\'s heading turns before the last relay.',
+    '- **Decoy**: the body that is not part of the route, in sectors that have one (061 onwards). Spoiler.',
     '- **Difficulty**: `-log10(win share × (0.35 + 0.65 × seen))`. One point is ten times harder.',
     ''
   ];
@@ -110,10 +126,10 @@ function writeReport(file, rows) {
   rows.forEach(({ sector, m }) => {
     if (sector.arc !== arc) {
       arc = sector.arc;
-      lines.push(`## ${arc}`, '', '| # | Name | Bodies | Relays | Win % | Seen | Forgives | Turn | Difficulty |', '|---|---|---|---|---|---|---|---|---|');
+      lines.push(`## ${arc}`, '', '| # | Name | Bodies | Decoy | Relays | Win % | Seen | Forgives | Turn | Difficulty |', '|---|---|---|---|---|---|---|---|---|---|');
     }
     lines.push(
-      `| ${pad3(sector.id)} | ${sector.name} | ${sector.bodies.length} | ${sector.relays.length} | ${m.winPct.toFixed(2)} | ` +
+      `| ${pad3(sector.id)} | ${sector.name} | ${sector.bodies.length} | ${(sector.bodies.find((b) => b.decoy) || { label: '–' }).label} | ${sector.relays.length} | ${m.winPct.toFixed(2)} | ` +
       `${Math.round(m.visibleShare * 100)}% | ${m.angTol.toFixed(1)}° / ${(m.spdTol * P.SPEED_TO_KMS).toFixed(2)} km/s | ` +
       `${Math.round(m.turn)}° | ${A.difficulty(m.winPct, m.visibleShare).toFixed(2)} |`
     );

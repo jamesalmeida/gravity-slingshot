@@ -654,7 +654,7 @@
       id: 45,
       name: 'HYPATIA LADDER',
       arc: 'TRIPLE CHAINS',
-      brief: '125° OF TURN ACROSS 3 BODIES TO LOCK ALL 3 RELAYS',
+      brief: '125° OF TURN IN ONE ARC TO LOCK ALL 3 RELAYS',
       probe: { x: 965, y: 395 },
       hintAngle: -173,
       hintSpeed: 230,
@@ -956,7 +956,7 @@
       id: 61,
       name: 'COLLINS KEYHOLE',
       arc: 'NARROW BEACONS',
-      brief: 'BEND PAST SIRIUS-A, THEN WHIP AROUND ORION-A FOR ALL 3 RELAYS',
+      brief: 'NARROW BEACONS: 305° OF TURN TO LOCK ALL 3 RELAYS, NO MARGIN',
       probe: { x: 230, y: 350 },
       hintAngle: -103,
       hintSpeed: 205,
@@ -973,17 +973,37 @@
     },
     {
       id: 62,
-      name: 'RUBIN PINHOLE',
+      name: 'RUBIN NEEDLE',
       arc: 'NARROW BEACONS',
-      brief: 'NARROW BEACONS: 95° OF TURN THROUGH 3 WELLS, NO MARGIN',
+      brief: 'NARROW BEACONS: 100° OF TURN TO LOCK BOTH RELAYS, NO MARGIN',
+      probe: { x: 150, y: 425 },
+      hintAngle: -42,
+      hintSpeed: 300,
+      solution: { angle: 303.1, speed: 254 },
+      bodies: [
+        { x: 600, y: 215, r: 35, mass: 170, type: 'giant', ring: true, tilt: 0.28, label: 'KRONOS-MINOR' },
+        { x: 840, y: 400, r: 25, mass: 150, type: 'hazard', label: 'LMC-J17' },
+        { x: 1065, y: 285, r: 26, mass: 145, type: 'hazard', decoy: true, label: 'VELA-K2' }
+      ],
+      relays: [
+        { x: 319, y: 224, r: 17, code: 'RLY-01' },
+        { x: 861, y: 256, r: 17, code: 'RLY-02' }
+      ]
+    },
+    {
+      id: 63,
+      name: 'LOVELL APERTURE',
+      arc: 'NARROW BEACONS',
+      brief: 'NARROW BEACONS: 95° OF TURN TO LOCK BOTH RELAYS, NO MARGIN',
       probe: { x: 1065, y: 155 },
       hintAngle: 163,
-      hintSpeed: 410,
-      solution: { angle: 137.3, speed: 333 },
+      hintSpeed: 370,
+      solution: { angle: 137.2, speed: 333 },
       bodies: [
         { x: 645, y: 325, r: 39, mass: 140, type: 'star', label: 'ALTAIR-IX' },
         { x: 160, y: 365, r: 37, mass: 115, type: 'giant', ring: true, tilt: -0.31, label: 'URANOS-V' },
-        { x: 425, y: 165, r: 25, mass: 145, type: 'hazard', label: 'SGR-J04' }
+        { x: 425, y: 165, r: 25, mass: 145, type: 'hazard', label: 'SGR-J04' },
+        { x: 165, y: 120, r: 34, mass: 140, type: 'giant', ring: true, tilt: 0.24, decoy: true, label: 'HYPERION-IX' }
       ],
       relays: [
         { x: 787, y: 362, r: 17, code: 'RLY-01' },
@@ -991,28 +1011,10 @@
       ]
     },
     {
-      id: 63,
-      name: 'LOVELL THREAD',
-      arc: 'NARROW BEACONS',
-      brief: 'BEND PAST SGR-B19, THEN WHIP AROUND EREBUS-II FOR BOTH RELAYS',
-      probe: { x: 1015, y: 350 },
-      hintAngle: 119,
-      hintSpeed: 510,
-      solution: { angle: 142.1, speed: 390 },
-      bodies: [
-        { x: 210, y: 275, r: 38, mass: 165, type: 'giant', ring: true, tilt: 0.24, label: 'EREBUS-II' },
-        { x: 750, y: 305, r: 25, mass: 140, type: 'hazard', label: 'SGR-B19' }
-      ],
-      relays: [
-        { x: 415, y: 467, r: 17, code: 'RLY-01' },
-        { x: 123, y: 331, r: 17, code: 'RLY-02' }
-      ]
-    },
-    {
       id: 64,
-      name: 'HOHMANN APERTURE',
+      name: 'HOHMANN THREAD',
       arc: 'NARROW BEACONS',
-      brief: '150° OF TURN ACROSS 2 BODIES TO LOCK BOTH RELAYS',
+      brief: 'NARROW BEACONS: 150° OF TURN TO LOCK BOTH RELAYS, NO MARGIN',
       probe: { x: 1030, y: 455 },
       hintAngle: 120,
       hintSpeed: 225,
@@ -1028,9 +1030,9 @@
     },
     {
       id: 65,
-      name: 'CASSINI NEEDLE',
+      name: 'CASSINI PINHOLE',
       arc: 'NARROW BEACONS',
-      brief: 'NARROW BEACONS: 150° OF TURN THROUGH 3 WELLS, NO MARGIN',
+      brief: 'NARROW BEACONS: 150° OF TURN TO LOCK ALL 3 RELAYS, NO MARGIN',
       probe: { x: 210, y: 170 },
       hintAngle: -45,
       hintSpeed: 220,
@@ -1048,9 +1050,28 @@
     },
     {
       id: 66,
-      name: 'MARIUS KEYHOLE',
+      name: 'MARIUS THREAD',
       arc: 'NARROW BEACONS',
-      brief: 'BEND PAST TITAN-III, THEN WHIP AROUND VELA-J04 FOR ALL 3 RELAYS',
+      brief: 'NARROW BEACONS: 85° OF TURN TO LOCK BOTH RELAYS, NO MARGIN',
+      probe: { x: 1085, y: 320 },
+      hintAngle: -126,
+      hintSpeed: 425,
+      solution: { angle: 215.1, speed: 329 },
+      bodies: [
+        { x: 485, y: 315, r: 41, mass: 165, type: 'giant', ring: true, tilt: -0.28, label: 'ORION-IX' },
+        { x: 650, y: 525, r: 24, mass: 145, type: 'hazard', label: 'XRB-X3' },
+        { x: 205, y: 555, r: 40, mass: 135, type: 'giant', decoy: true, label: 'TETHYS-B' }
+      ],
+      relays: [
+        { x: 682, y: 138, r: 17, code: 'RLY-01' },
+        { x: 153, y: 345, r: 17, code: 'RLY-02' }
+      ]
+    },
+    {
+      id: 67,
+      name: 'TSIEN KEYHOLE',
+      arc: 'NARROW BEACONS',
+      brief: 'NARROW BEACONS: 75° OF TURN TO LOCK ALL 3 RELAYS, NO MARGIN',
       probe: { x: 135, y: 300 },
       hintAngle: 25,
       hintSpeed: 200,
@@ -1066,36 +1087,17 @@
       ]
     },
     {
-      id: 67,
-      name: 'TSIEN THREAD',
-      arc: 'NARROW BEACONS',
-      brief: 'BEND PAST RIGEL-C, THEN WHIP AROUND ATLAS-VII FOR ALL 3 RELAYS',
-      probe: { x: 990, y: 420 },
-      hintAngle: 168,
-      hintSpeed: 395,
-      solution: { angle: 150.7, speed: 316 },
-      bodies: [
-        { x: 455, y: 505, r: 44, mass: 130, type: 'star', label: 'RIGEL-C' },
-        { x: 455, y: 165, r: 38, mass: 125, type: 'giant', label: 'ATLAS-VII' }
-      ],
-      relays: [
-        { x: 719, y: 547, r: 17, code: 'RLY-01' },
-        { x: 463, y: 589, r: 17, code: 'RLY-02' },
-        { x: 201, y: 294, r: 17, code: 'RLY-03' }
-      ]
-    },
-    {
       id: 68,
-      name: 'LEMAITRE APERTURE',
+      name: 'LEMAITRE PINHOLE',
       arc: 'NARROW BEACONS',
-      brief: 'BEND PAST VELA-K2, THEN WHIP AROUND JOVE-B FOR ALL 3 RELAYS',
+      brief: 'NARROW BEACONS: 80° OF TURN TO LOCK ALL 3 RELAYS, NO MARGIN',
       probe: { x: 980, y: 370 },
-      hintAngle: -142,
-      hintSpeed: 510,
+      hintAngle: -136,
+      hintSpeed: 540,
       solution: { angle: 195.9, speed: 412 },
       bodies: [
         { x: 320, y: 400, r: 37, mass: 165, type: 'giant', label: 'JOVE-B' },
-        { x: 455, y: 565, r: 25, mass: 155, type: 'hazard', label: 'VELA-K2' }
+        { x: 455, y: 565, r: 25, mass: 155, type: 'hazard', label: 'LMC-B19' }
       ],
       relays: [
         { x: 492, y: 281, r: 17, code: 'RLY-01' },
@@ -1107,25 +1109,27 @@
       id: 69,
       name: 'SOMERVILLE NEEDLE',
       arc: 'NARROW BEACONS',
-      brief: 'BEND PAST XRB-X3, THEN WHIP AROUND ORION-IX FOR BOTH RELAYS',
-      probe: { x: 1085, y: 320 },
-      hintAngle: -123,
-      hintSpeed: 355,
-      solution: { angle: 215.1, speed: 323 },
+      brief: 'NARROW BEACONS: 85° OF TURN TO LOCK ALL 3 RELAYS, NO MARGIN',
+      probe: { x: 990, y: 420 },
+      hintAngle: 173,
+      hintSpeed: 345,
+      solution: { angle: 151.8, speed: 306 },
       bodies: [
-        { x: 485, y: 315, r: 41, mass: 165, type: 'giant', ring: true, tilt: -0.28, label: 'ORION-IX' },
-        { x: 650, y: 525, r: 24, mass: 145, type: 'hazard', label: 'XRB-X3' }
+        { x: 455, y: 505, r: 44, mass: 130, type: 'star', label: 'RIGEL-C' },
+        { x: 455, y: 165, r: 38, mass: 125, type: 'giant', label: 'ATLAS-VII' },
+        { x: 100, y: 490, r: 46, mass: 115, type: 'giant', decoy: true, label: 'ODIN-MAJOR' }
       ],
       relays: [
-        { x: 682, y: 138, r: 17, code: 'RLY-01' },
-        { x: 153, y: 345, r: 17, code: 'RLY-02' }
+        { x: 719, y: 547, r: 17, code: 'RLY-01' },
+        { x: 463, y: 589, r: 17, code: 'RLY-02' },
+        { x: 201, y: 294, r: 17, code: 'RLY-03' }
       ]
     },
     {
       id: 70,
-      name: 'ZHANG-HENG PINHOLE',
+      name: 'ZHANG-HENG APERTURE',
       arc: 'NARROW BEACONS',
-      brief: 'BEND PAST SGR-Z3, THEN WHIP AROUND ODIN-VII FOR BOTH RELAYS',
+      brief: 'NARROW BEACONS: 235° OF TURN TO LOCK BOTH RELAYS, NO MARGIN',
       probe: { x: 235, y: 295 },
       hintAngle: 1,
       hintSpeed: 200,
@@ -1326,31 +1330,53 @@
       id: 81,
       name: 'POINCARE RELAY RUN',
       arc: 'CROWDED SKIES',
-      brief: 'IN PAST BOREAS-MINOR, OUT BY TRITON-S: 160° OF TURN, 3 RELAYS',
-      probe: { x: 165, y: 185 },
-      hintAngle: 25,
-      hintSpeed: 205,
-      solution: { angle: 45.4, speed: 176 },
+      brief: 'IN PAST DIONE-MINOR, OUT BY PSR-Q8: 115° OF TURN, 3 RELAYS',
+      probe: { x: 180, y: 355 },
+      hintAngle: -105,
+      hintSpeed: 315,
+      solution: { angle: 279.6, speed: 289 },
       bodies: [
-        { x: 500, y: 425, r: 32, mass: 125, type: 'star', label: 'ALPHA-B' },
-        { x: 325, y: 475, r: 31, mass: 115, type: 'giant', ring: true, tilt: -0.23, label: 'BOREAS-MINOR' },
-        { x: 665, y: 425, r: 28, mass: 105, type: 'planet', label: 'ENCELADUS-IX' },
-        { x: 1010, y: 525, r: 23, mass: 105, type: 'planet', label: 'TRITON-S' },
-        { x: 385, y: 280, r: 21, mass: 130, type: 'hazard', label: 'MAG-J04' }
+        { x: 520, y: 380, r: 33, mass: 125, type: 'star', label: 'CAPELLA-IV' },
+        { x: 875, y: 350, r: 30, mass: 135, type: 'giant', ring: true, tilt: 0.21, label: 'HYPERION-VII' },
+        { x: 420, y: 125, r: 28, mass: 80, type: 'planet', label: 'DIONE-MINOR' },
+        { x: 875, y: 535, r: 19, mass: 135, type: 'hazard', label: 'PSR-Q8' },
+        { x: 1000, y: 225, r: 37, mass: 155, type: 'giant', ring: true, tilt: 0.24, decoy: true, label: 'EREBUS-S' }
       ],
       relays: [
-        { x: 605, y: 279, r: 22, code: 'RLY-01' },
-        { x: 787, y: 363, r: 22, code: 'RLY-02' },
-        { x: 868, y: 582, r: 22, code: 'RLY-03' }
+        { x: 271, y: 146, r: 22, code: 'RLY-01' },
+        { x: 567, y: 76, r: 22, code: 'RLY-02' },
+        { x: 782, y: 224, r: 22, code: 'RLY-03' }
       ]
     },
     {
       id: 82,
-      name: 'SCHWARZSCHILD RECALL',
+      name: 'SCHWARZSCHILD CHAIN',
+      arc: 'CROWDED SKIES',
+      brief: 'IN PAST GAIA-C, OUT BY SGR-X3: 90° OF TURN, 3 RELAYS',
+      probe: { x: 955, y: 445 },
+      hintAngle: -127,
+      hintSpeed: 500,
+      solution: { angle: 264.2, speed: 435 },
+      bodies: [
+        { x: 765, y: 275, r: 37, mass: 110, type: 'star', label: 'ROSS-128-VII' },
+        { x: 715, y: 545, r: 34, mass: 150, type: 'giant', label: 'GAIA-C' },
+        { x: 390, y: 355, r: 24, mass: 105, type: 'planet', label: 'EUROPA-IX' },
+        { x: 390, y: 505, r: 20, mass: 135, type: 'hazard', label: 'SGR-X3' },
+        { x: 175, y: 105, r: 20, mass: 135, type: 'hazard', decoy: true, label: 'XRB-Q8' }
+      ],
+      relays: [
+        { x: 858, y: 197, r: 22, code: 'RLY-01' },
+        { x: 688, y: 91, r: 22, code: 'RLY-02' },
+        { x: 294, y: 79, r: 22, code: 'RLY-03' }
+      ]
+    },
+    {
+      id: 83,
+      name: 'KERR RECALL',
       arc: 'CROWDED SKIES',
       brief: 'IN PAST ECHO-Q8, OUT BY VELA-J17: 190° OF TURN, 3 RELAYS',
       probe: { x: 195, y: 310 },
-      hintAngle: -73,
+      hintAngle: -72,
       hintSpeed: 230,
       solution: { angle: 262.5, speed: 188 },
       bodies: [
@@ -1366,19 +1392,20 @@
       ]
     },
     {
-      id: 83,
-      name: 'KERR LADDER',
+      id: 84,
+      name: 'OORT SLALOM',
       arc: 'CROWDED SKIES',
-      brief: 'IN PAST REGULUS-MAJOR, OUT BY LMC-X3: 130° OF TURN, 3 RELAYS',
+      brief: 'IN PAST REGULUS-MAJOR, OUT BY LMC-X3: 120° OF TURN, 3 RELAYS',
       probe: { x: 220, y: 485 },
-      hintAngle: 82,
-      hintSpeed: 370,
-      solution: { angle: 52.6, speed: 299 },
+      hintAngle: 81,
+      hintSpeed: 365,
+      solution: { angle: 53, speed: 298 },
       bodies: [
         { x: 360, y: 250, r: 34, mass: 115, type: 'star', label: 'REGULUS-MAJOR' },
         { x: 945, y: 435, r: 34, mass: 160, type: 'giant', ring: true, tilt: 0.2, label: 'ODIN-C' },
         { x: 745, y: 570, r: 27, mass: 80, type: 'planet', label: 'TRITON-III' },
-        { x: 965, y: 200, r: 19, mass: 140, type: 'hazard', label: 'LMC-X3' }
+        { x: 965, y: 200, r: 19, mass: 140, type: 'hazard', label: 'LMC-X3' },
+        { x: 1120, y: 325, r: 34, mass: 140, type: 'giant', decoy: true, label: 'RHEA-MINOR' }
       ],
       relays: [
         { x: 366, y: 618, r: 22, code: 'RLY-01' },
@@ -1387,8 +1414,8 @@
       ]
     },
     {
-      id: 84,
-      name: 'OORT SLALOM',
+      id: 85,
+      name: 'SAGAN TRAVERSE',
       arc: 'CROWDED SKIES',
       brief: 'IN PAST BOREAS-IX, OUT BY LMC-J04: 175° OF TURN, 3 RELAYS',
       probe: { x: 1075, y: 360 },
@@ -1409,40 +1436,19 @@
       ]
     },
     {
-      id: 85,
-      name: 'SAGAN CASCADE',
-      arc: 'CROWDED SKIES',
-      brief: 'IN PAST HELIOS-III, OUT BY EUROPA-II: 120° OF TURN, 3 RELAYS',
-      probe: { x: 1045, y: 410 },
-      hintAngle: 79,
-      hintSpeed: 290,
-      solution: { angle: 105.3, speed: 260 },
-      bodies: [
-        { x: 785, y: 325, r: 39, mass: 105, type: 'star', label: 'HELIOS-III' },
-        { x: 215, y: 325, r: 32, mass: 160, type: 'giant', ring: true, tilt: 0.24, label: 'BRONTES-C' },
-        { x: 215, y: 115, r: 24, mass: 85, type: 'planet', label: 'EUROPA-II' },
-        { x: 870, y: 115, r: 21, mass: 145, type: 'hazard', label: 'VELA-Z3' }
-      ],
-      relays: [
-        { x: 931, y: 568, r: 22, code: 'RLY-01' },
-        { x: 681, y: 597, r: 22, code: 'RLY-02' },
-        { x: 437, y: 431, r: 22, code: 'RLY-03' }
-      ]
-    },
-    {
       id: 86,
-      name: 'EULER TRAVERSE',
+      name: 'EULER LADDER',
       arc: 'CROWDED SKIES',
-      brief: 'IN PAST VEGA-N, OUT BY PSR-Q8: 140° OF TURN, 3 RELAYS',
+      brief: 'IN PAST VEGA-N, OUT BY VELA-X9: 140° OF TURN, 3 RELAYS',
       probe: { x: 1025, y: 510 },
-      hintAngle: 123,
-      hintSpeed: 560,
+      hintAngle: 177,
+      hintSpeed: 500,
       solution: { angle: 155.3, speed: 436 },
       bodies: [
         { x: 365, y: 410, r: 36, mass: 155, type: 'giant', label: 'ORION-C' },
         { x: 785, y: 410, r: 34, mass: 120, type: 'star', label: 'VEGA-N' },
-        { x: 555, y: 165, r: 20, mass: 145, type: 'hazard', label: 'PSR-Q8' },
-        { x: 195, y: 410, r: 19, mass: -50, type: 'repulsor', label: 'FLUX-X9' }
+        { x: 555, y: 165, r: 20, mass: 145, type: 'hazard', label: 'VELA-X9' },
+        { x: 195, y: 410, r: 19, mass: -50, type: 'repulsor', label: 'ECHO-X3' }
       ],
       relays: [
         { x: 826, y: 576, r: 22, code: 'RLY-01' },
@@ -1452,7 +1458,7 @@
     },
     {
       id: 87,
-      name: 'LE VERRIER CHAIN',
+      name: 'LE VERRIER CASCADE',
       arc: 'CROWDED SKIES',
       brief: 'IN PAST ATLAS-C, OUT BY REGULUS-N: 150° OF TURN, 3 RELAYS',
       probe: { x: 150, y: 415 },
@@ -1473,39 +1479,41 @@
     },
     {
       id: 88,
-      name: 'SHAPLEY LADDER',
+      name: 'SHAPLEY BOOMERANG',
       arc: 'CROWDED SKIES',
-      brief: 'IN PAST VEGA-C, OUT BY CYG-J17: 160° OF TURN, 3 RELAYS',
-      probe: { x: 245, y: 240 },
-      hintAngle: 73,
-      hintSpeed: 290,
-      solution: { angle: 51.6, speed: 234 },
+      brief: 'IN PAST ATLAS-B, OUT BY ECHO-B19: 300° OF TURN, 3 RELAYS',
+      probe: { x: 1055, y: 285 },
+      hintAngle: 139,
+      hintSpeed: 300,
+      solution: { angle: 169.3, speed: 252 },
       bodies: [
-        { x: 475, y: 530, r: 36, mass: 110, type: 'giant', ring: true, tilt: -0.2, label: 'URANOS-MAJOR' },
-        { x: 500, y: 245, r: 32, mass: 135, type: 'star', label: 'VEGA-C' },
-        { x: 840, y: 340, r: 19, mass: 140, type: 'hazard', label: 'CYG-J17' },
-        { x: 695, y: 145, r: 18, mass: -35, type: 'repulsor', label: 'VOID-K2' }
+        { x: 345, y: 380, r: 34, mass: 125, type: 'star', label: 'VEGA-III' },
+        { x: 845, y: 225, r: 26, mass: 100, type: 'planet', label: 'NEREID-A' },
+        { x: 680, y: 535, r: 34, mass: 125, type: 'giant', label: 'ATLAS-B' },
+        { x: 685, y: 170, r: 18, mass: -60, type: 'repulsor', label: 'ECHO-B19' },
+        { x: 235, y: 580, r: 21, mass: 135, type: 'hazard', label: 'SGR-X1' }
       ],
       relays: [
-        { x: 448, y: 385, r: 22, code: 'RLY-01' },
-        { x: 813, y: 553, r: 22, code: 'RLY-02' },
-        { x: 1090, y: 351, r: 22, code: 'RLY-03' }
+        { x: 767, y: 156, r: 22, code: 'RLY-01' },
+        { x: 908, y: 125, r: 22, code: 'RLY-02' },
+        { x: 1063, y: 527, r: 22, code: 'RLY-03' }
       ]
     },
     {
       id: 89,
       name: 'SHEN-KUO TRAVERSE',
       arc: 'CROWDED SKIES',
-      brief: 'IN PAST CERES-PRIME, OUT BY MIRA-VII: 120° OF TURN, 3 RELAYS',
+      brief: 'IN PAST CERES-PRIME, OUT BY MIRA-VII: 125° OF TURN, 3 RELAYS',
       probe: { x: 1015, y: 175 },
-      hintAngle: -116,
-      hintSpeed: 560,
-      solution: { angle: 209.8, speed: 499 },
+      hintAngle: 174,
+      hintSpeed: 545,
+      solution: { angle: 209.8, speed: 501 },
       bodies: [
         { x: 495, y: 525, r: 34, mass: 135, type: 'star', label: 'MIRA-VII' },
         { x: 605, y: 205, r: 37, mass: 105, type: 'giant', label: 'TYPHON-A' },
         { x: 235, y: 220, r: 20, mass: -55, type: 'repulsor', label: 'NULL-D6' },
-        { x: 785, y: 205, r: 24, mass: 105, type: 'planet', label: 'CERES-PRIME' }
+        { x: 785, y: 205, r: 24, mass: 105, type: 'planet', label: 'CERES-PRIME' },
+        { x: 375, y: 430, r: 21, mass: 145, type: 'hazard', decoy: true, label: 'LMC-K5' }
       ],
       relays: [
         { x: 776, y: 81, r: 22, code: 'RLY-01' },
@@ -1559,51 +1567,53 @@
     },
     {
       id: 92,
-      name: 'MELVILL CIRCUIT',
+      name: 'MELVILL GRAND TOUR',
       arc: 'GRAND TOURS',
-      brief: 'IN PAST REGULUS-A, OUT BY MIRA-A: 260° OF TURN, 3 RELAYS',
-      probe: { x: 225, y: 175 },
-      hintAngle: -34,
-      hintSpeed: 255,
-      solution: { angle: 351.3, speed: 238 },
+      brief: 'IN PAST ODIN-B, OUT BY ORION-VII: 135° OF TURN, 4 RELAYS',
+      probe: { x: 115, y: 310 },
+      hintAngle: -35,
+      hintSpeed: 315,
+      solution: { angle: 290.9, speed: 267 },
       bodies: [
-        { x: 790, y: 135, r: 33, mass: 135, type: 'star', label: 'MIRA-A' },
-        { x: 425, y: 350, r: 36, mass: 130, type: 'star', label: 'REGULUS-A' },
-        { x: 725, y: 395, r: 30, mass: 125, type: 'giant', label: 'TYPHON-C' },
-        { x: 890, y: 515, r: 27, mass: 90, type: 'planet', label: 'DIONE-C' },
-        { x: 325, y: 515, r: 21, mass: 140, type: 'hazard', label: 'CYG-X9' }
+        { x: 875, y: 230, r: 35, mass: 115, type: 'star', label: 'SIRIUS-N' },
+        { x: 875, y: 580, r: 37, mass: 155, type: 'giant', label: 'ORION-VII' },
+        { x: 370, y: 160, r: 29, mass: 105, type: 'giant', ring: true, tilt: 0.24, label: 'ODIN-B' },
+        { x: 670, y: 115, r: 18, mass: -35, type: 'repulsor', label: 'ANTI-K5' },
+        { x: 585, y: 455, r: 37, mass: 110, type: 'giant', decoy: true, label: 'TYPHON-IX' }
       ],
       relays: [
-        { x: 565, y: 367, r: 19, code: 'RLY-01' },
-        { x: 731, y: 563, r: 19, code: 'RLY-02' },
-        { x: 955, y: 252, r: 19, code: 'RLY-03' }
+        { x: 237, y: 120, r: 19, code: 'RLY-01' },
+        { x: 463, y: 80, r: 19, code: 'RLY-02' },
+        { x: 581, y: 164, r: 19, code: 'RLY-03' },
+        { x: 768, y: 461, r: 19, code: 'RLY-04' }
       ]
     },
     {
       id: 93,
-      name: 'HOYLE PILGRIMAGE',
+      name: 'HOYLE CIRCUIT',
       arc: 'GRAND TOURS',
-      brief: 'IN PAST THOR-III, OUT BY GRO-K2: 200° OF TURN, 3 RELAYS',
-      probe: { x: 145, y: 515 },
-      hintAngle: -27,
-      hintSpeed: 320,
-      solution: { angle: 307.8, speed: 253 },
+      brief: 'IN PAST BELLATRIX-MAJOR, OUT BY VELA-K5: 155° OF TURN, 4 RELAYS',
+      probe: { x: 165, y: 190 },
+      hintAngle: -74,
+      hintSpeed: 475,
+      solution: { angle: 314.5, speed: 395 },
       bodies: [
-        { x: 370, y: 415, r: 29, mass: 150, type: 'giant', label: 'THOR-III' },
-        { x: 780, y: 400, r: 36, mass: 130, type: 'star', label: 'REGULUS-II' },
-        { x: 370, y: 200, r: 27, mass: 95, type: 'planet', label: 'HAUMEA-V' },
-        { x: 965, y: 155, r: 21, mass: 135, type: 'hazard', label: 'GRO-K2' },
-        { x: 545, y: 125, r: 18, mass: -40, type: 'repulsor', label: 'ANTI-X9' }
+        { x: 425, y: 225, r: 34, mass: 115, type: 'giant', label: 'HYPERION-V' },
+        { x: 425, y: 575, r: 38, mass: 110, type: 'star', label: 'BELLATRIX-MAJOR' },
+        { x: 335, y: 380, r: 26, mass: 100, type: 'planet', label: 'ERIS-S' },
+        { x: 830, y: 565, r: 21, mass: 125, type: 'hazard', label: 'VELA-K5' },
+        { x: 1045, y: 425, r: 20, mass: -55, type: 'repulsor', label: 'RIFT-J17' }
       ],
       relays: [
-        { x: 293, y: 385, r: 19, code: 'RLY-01' },
-        { x: 566, y: 527, r: 19, code: 'RLY-02' },
-        { x: 1031, y: 568, r: 19, code: 'RLY-03' }
+        { x: 343, y: 76, r: 19, code: 'RLY-01' },
+        { x: 730, y: 132, r: 19, code: 'RLY-02' },
+        { x: 891, y: 260, r: 19, code: 'RLY-03' },
+        { x: 944, y: 433, r: 19, code: 'RLY-04' }
       ]
     },
     {
       id: 94,
-      name: 'PENROSE ALIGNMENT',
+      name: 'PENROSE PILGRIMAGE',
       arc: 'GRAND TOURS',
       brief: 'IN PAST WOLF-359-II, OUT BY OBERON-S: 275° OF TURN, 4 RELAYS',
       probe: { x: 130, y: 190 },
@@ -1626,7 +1636,7 @@
     },
     {
       id: 95,
-      name: 'ALDRIN GRAND TOUR',
+      name: 'ALDRIN ALIGNMENT',
       arc: 'GRAND TOURS',
       brief: 'IN PAST SGR-D6, OUT BY TRITON-II: 260° OF TURN, 4 RELAYS',
       probe: { x: 1080, y: 400 },
@@ -1692,29 +1702,7 @@
     },
     {
       id: 98,
-      name: 'COPERNICUS GRAND TOUR',
-      arc: 'GRAND TOURS',
-      brief: 'IN PAST DENEB-IX, OUT BY LMC-J17: 215° OF TURN, 4 RELAYS',
-      probe: { x: 150, y: 275 },
-      hintAngle: -23,
-      hintSpeed: 220,
-      solution: { angle: 4.2, speed: 204 },
-      bodies: [
-        { x: 345, y: 550, r: 33, mass: 135, type: 'star', label: 'DENEB-IX' },
-        { x: 955, y: 550, r: 30, mass: 140, type: 'giant', label: 'AETHER-MAJOR' },
-        { x: 790, y: 315, r: 28, mass: 90, type: 'planet', label: 'ENCELADUS-III' },
-        { x: 1010, y: 140, r: 19, mass: 135, type: 'hazard', label: 'LMC-J17' }
-      ],
-      relays: [
-        { x: 359, y: 330, r: 19, code: 'RLY-01' },
-        { x: 595, y: 509, r: 19, code: 'RLY-02' },
-        { x: 1068, y: 639, r: 19, code: 'RLY-03' },
-        { x: 1126, y: 65, r: 19, code: 'RLY-04' }
-      ]
-    },
-    {
-      id: 99,
-      name: 'OLBERS CIRCUIT',
+      name: 'COPERNICUS CIRCUIT',
       arc: 'GRAND TOURS',
       brief: 'IN PAST ROSS-128-MAJOR, OUT BY SIRIUS-V: 270° OF TURN, 4 RELAYS',
       probe: { x: 955, y: 330 },
@@ -1736,20 +1724,42 @@
       ]
     },
     {
-      id: 100,
-      name: 'HALLEY PILGRIMAGE',
+      id: 99,
+      name: 'OLBERS PILGRIMAGE',
       arc: 'GRAND TOURS',
-      brief: 'IN PAST VELA-X9, OUT BY WOLF-359-PRIME: 215° OF TURN, 4 RELAYS',
+      brief: 'IN PAST HYPERION-MAJOR, OUT BY FLUX-K2: 170° OF TURN, 3 RELAYS',
+      probe: { x: 210, y: 565 },
+      hintAngle: -106,
+      hintSpeed: 555,
+      solution: { angle: 276, speed: 456 },
+      bodies: [
+        { x: 480, y: 345, r: 29, mass: 110, type: 'star', label: 'REGULUS-II' },
+        { x: 480, y: 510, r: 29, mass: 115, type: 'giant', label: 'HYPERION-MAJOR' },
+        { x: 480, y: 170, r: 33, mass: 145, type: 'giant', ring: true, tilt: -0.26, label: 'ATLAS-N' },
+        { x: 830, y: 135, r: 18, mass: -30, type: 'repulsor', label: 'FLUX-K2' },
+        { x: 800, y: 570, r: 35, mass: 120, type: 'giant', decoy: true, label: 'THOR-S' }
+      ],
+      relays: [
+        { x: 285, y: 297, r: 19, code: 'RLY-01' },
+        { x: 785, y: 210, r: 19, code: 'RLY-02' },
+        { x: 993, y: 630, r: 19, code: 'RLY-03' }
+      ]
+    },
+    {
+      id: 100,
+      name: 'HALLEY CROSSING',
+      arc: 'GRAND TOURS',
+      brief: 'IN PAST SGR-B19, OUT BY WOLF-359-PRIME: 215° OF TURN, 4 RELAYS',
       probe: { x: 130, y: 240 },
-      hintAngle: 87,
-      hintSpeed: 350,
+      hintAngle: 22,
+      hintSpeed: 370,
       solution: { angle: 49.7, speed: 283 },
       bodies: [
         { x: 945, y: 240, r: 30, mass: 135, type: 'star', label: 'WOLF-359-PRIME' },
         { x: 365, y: 480, r: 38, mass: 125, type: 'star', label: 'BARNARD-II' },
         { x: 565, y: 240, r: 31, mass: 160, type: 'giant', label: 'OCEANUS-B' },
         { x: 890, y: 575, r: 28, mass: 80, type: 'planet', label: 'TRITON-N' },
-        { x: 345, y: 195, r: 21, mass: 120, type: 'hazard', label: 'VELA-X9' }
+        { x: 345, y: 195, r: 21, mass: 120, type: 'hazard', label: 'SGR-B19' }
       ],
       relays: [
         { x: 327, y: 367, r: 19, code: 'RLY-01' },

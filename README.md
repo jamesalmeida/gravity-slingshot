@@ -39,7 +39,7 @@ The HUD shows launches, delta-V in km/s, launch azimuth, predicted periapsis and
 | 031–040 | Event Horizons | Small, heavy singularities: sharp turns, thin margins |
 | 041–050 | Triple Chains | Three wells, three relays, one arc |
 | 051–060 | Repulsor Fields | A new body that pushes the probe away |
-| 061–070 | Narrow Beacons | Relays at 70% of their usual radius |
+| 061–070 | Narrow Beacons | Relays at 70% of their usual radius. From here on (except 071–080), one body in a sector may be a decoy: steer clear of it instead of using its gravity |
 | 071–080 | Blind Transfers | The last relay lies past the end of the predictor |
 | 081–090 | Crowded Skies | Four and five bodies |
 | 091–100 | Grand Tours | Everything at once |
@@ -65,7 +65,7 @@ The predictor, the live flight and the solver all step the same integrator, so t
 ```sh
 npm run check        # re-fly every sector's recorded solution, about a second
 npm run check:sweep  # fly every launch (0.5° × 6 px/s grid) for all 100 sectors, about a minute
-npm run generate     # rebuild sectors 009–100 and docs/sectors.md, several minutes
+npm run generate     # rebuild sectors 009–100 and docs/sectors.md, about 15 minutes
 ```
 
 Each sector records one launch known to clear it. CI re-flies all 100 on every push, so a physics or level change that breaks a sector fails the build. The sweep reports how many launches clear each sector, plus the most forgiving one.

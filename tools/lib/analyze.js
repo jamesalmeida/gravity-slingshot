@@ -126,6 +126,37 @@ function tolerance(sector, angle, speed) {
   };
 }
 
+// The winning launch closest to a given one, searching outwards up to maxAngle degrees and
+// maxSpeed px/s away. Null if there is none: the route through that launch does not exist.
+const NEAR_ANGLE = 4;
+const NEAR_SPEED = 40;
+function nearestWin(sector, angle, speed, maxAngle = NEAR_ANGLE, maxSpeed = NEAR_SPEED) {
+  if (wins(sector, angle, speed)) return { angle, speed };
+  const offsets = [];
+  for (let da = -maxAngle; da <= maxAngle; da += 0.5) {
+    for (let ds = -maxSpeed; ds <= maxSpeed; ds += 5) {
+      offsets.push({ da, ds, far: Math.hypot(da / maxAngle, ds / maxSpeed) });
+    }
+  }
+  offsets.sort((p, q) => p.far - q.far);
+  for (const o of offsets) {
+    if (wins(sector, angle + o.da, speed + o.ds)) return { angle: angle + o.da, speed: speed + o.ds };
+  }
+  return null;
+}
+
+// How close a launch's path comes to a body's surface before the flight ends.
+function clearance(sector, angle, speed, body) {
+  const rec = [];
+  launch(sector, angle, speed, rec);
+  let best = Infinity;
+  for (let i = 0; i < rec.length; i += 3) {
+    const d = Math.hypot(rec[i] - body.x, rec[i + 1] - body.y) - body.r;
+    if (d < best) best = d;
+  }
+  return best;
+}
+
 // Layout faults that make a sector unreadable or unfair regardless of physics.
 function staticProblems(sector) {
   const problems = [];
@@ -159,4 +190,7 @@ function difficulty(winPct, visibleShare) {
   return -Math.log10((winPct / 100) * (0.35 + 0.65 * visibleShare));
 }
 
-module.exports = { P, DEG, ANGLE_STEP, SPEED_STEP, flight, launch, wins, sweep, tolerance, staticProblems, difficulty };
+module.exports = {
+  P, DEG, ANGLE_STEP, SPEED_STEP, NEAR_ANGLE, NEAR_SPEED,
+  flight, launch, wins, sweep, tolerance, nearestWin, clearance, staticProblems, difficulty
+};

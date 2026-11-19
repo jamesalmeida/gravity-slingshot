@@ -28,10 +28,29 @@ A candidate is kept only if it passes all of these. Each one exists because sect
 | The path stays on screen | The recorded solution must not leave the field before its last relay. | You cannot aim at what you cannot see. |
 | Every relay is past a bend | The path must turn at least 18–25° between one relay and the next, and by a set amount in total. | Otherwise the relays line up and one straight shot takes them all. |
 | Forgiving solution | The intended launch must still win across an unbroken range of azimuth and of speed (from 2.5° and 0.96 km/s in the first arc down to 1° and 0.32 km/s in the last). The launch is moved to the middle of that range before it is recorded. | A mouse drag moves the aim by about half a degree per pixel. A solution narrower than that is luck, not skill. It also keeps solutions valid across browsers, whose floating-point maths differ slightly. |
-| No decorative wells | Remove any one body and the solution must fail. Sectors with four or more bodies may keep one that only acts as an obstacle. | A body that does nothing is clutter. |
+| Every body earns its place | Remove any one body and the solution must fail. From sector 061 a sector may also carry one deliberate decoy (see below). | A body that does nothing and fools nobody is clutter. |
 | No straight shots | Across all 57,600 launches, the straightest winning one must still turn by a minimum amount (22° in the first arc, up to 60° in the last). | Catches layouts where a fast direct shot wins and the intended curve is optional. |
 | Same route after centring | Moving the launch to the middle of its range must not turn it into a different, much longer flight. | The recorded solution, the sector's name and its brief should all describe the same path. |
 | Arc theme holds | A sector in the repulsor arc must need its repulsor. A "blind" sector must have no win the predictor can show to the end. | The arc is supposed to teach that one idea. |
+
+## Decoys (sector 061 onwards)
+
+In the first five arcs every body is part of the route, so "use them all" is a safe assumption. From Narrow Beacons on, a sector may also contain one decoy: a body to steer clear of, not one to slingshot around. You have to work out whether there is one and which it is. Not every sector in those arcs has one, so you cannot assume either way. The Blind Transfers arc (071–080) has none, because those sectors are fiddly enough already.
+
+A decoy is meant to be a fair obstacle, never an annoyance. It is added *after* a sector already works without it. The generator tries up to 60 positions and keeps the first where all of these hold:
+
+- **It looks like the real bodies.** It is a star, gas giant or singularity just as heavy (mass 105 or more), never a small planet or a repulsor.
+- **It is near the route.** It sits within 300 px of a relay and the route passes within 220 px of it, so it is worth noticing.
+- **The route never flies by it.** The solution stays at least 55 px clear of its surface. You never have to thread past a decoy or use its pull.
+- **It is not needed.** The route existed before the decoy did. With the decoy in place the winning launch has moved by at most 4° and 1.28 km/s, takes about as long, and turns about as far: the same route with a small aim correction.
+- **It costs little.** The solution keeps at least 60% of the aiming margin it had without the decoy, and still meets the arc's minimum.
+- **Nothing else got cheaper.** Every other body is still essential, and the sector goes through the full sweep again with the decoy in it, so its difficulty is measured, not assumed.
+
+"Not needed" does not mean "has no effect". Every body pulls on the probe all the time, and the predictor you aim with already includes the decoy's pull. What a decoy changes is the planning: it is the one body you route away from.
+
+An earlier version used a stricter test, that the *identical* launch must win with the body deleted. That almost never holds for a heavy body near the route (5 sectors out of 40 qualified), because gravity here is long-range. Bodies that passed were mostly far from everything, which is clutter.
+
+Sector briefs in these arcs never list the route body by body, because that would give the decoy away. The data marks the decoy with `decoy: true` on the body. The game ignores that field; `npm run check` uses it to re-verify the rules above.
 
 ## Measuring difficulty
 
@@ -48,7 +67,7 @@ difficulty = -log10( win share × (0.35 + 0.65 × seen share) )
 
 The original eight sectors measure between 1.8 (Kepler Bend) and 3.2 (Triple Resonance) on this scale. The generated ones run from 1.8 (sector 009) to 3.6 (sector 100). [sectors.md](sectors.md) lists every sector's numbers.
 
-Win share is a good measure but not a complete one. It does not know that a hairpin is harder to imagine than a gentle bend, or that five bodies are more confusing than two. That is why the campaign also changes *what kind* of sector you get, not just the number.
+Win share is a good measure but not a complete one. It does not know that a hairpin is harder to imagine than a gentle bend, that five bodies are more confusing than two, or that one of the bodies is a decoy. That is why the campaign also changes *what kind* of sector you get, not just the number.
 
 ## The campaign: nine arcs after the original eight
 
@@ -62,7 +81,7 @@ Each arc adds one idea, and each has a band of win share that its sectors are pi
 | 031–040 | Event Horizons | Small, heavy singularities | 2–3 | 2 | 0.8% → 0.2% |
 | 041–050 | Triple Chains | Three wells, three relays | 3 | 3 | 0.55% → 0.14% |
 | 051–060 | Repulsor Fields | Repulsors, which push | 2–3 | 2 | 0.7% → 0.16% |
-| 061–070 | Narrow Beacons | Relays at 70% radius | 2–3 | 2–3 | 0.36% → 0.09% |
+| 061–070 | Narrow Beacons | Relays at 70% radius. Decoys begin | 2–3 | 2–3 | 0.36% → 0.09% |
 | 071–080 | Blind Transfers | Last relay beyond the predictor | 2–3 | 2 | 0.5% → 0.1% |
 | 081–090 | Crowded Skies | Four and five bodies | 4–5 | 3 | 0.26% → 0.07% |
 | 091–100 | Grand Tours | All of it together | 4–5 | 3–4 | 0.14% → 0.035% |
@@ -74,14 +93,14 @@ The bands are targets. The selector takes the closest candidate available, so th
 ## Regenerating
 
 ```sh
-npm run generate        # rebuild src/sectors-generated.js and docs/sectors.md (about 7 minutes on 10 cores)
+npm run generate        # rebuild src/sectors-generated.js and docs/sectors.md (about 15 minutes on 10 cores)
 npm run check           # re-fly every recorded solution (about a second; this is what CI runs)
 npm run check:sweep     # full sweep of all 100 sectors (about a minute)
 ```
 
 The generator is seeded (`--seed`, default 2026). The same seed gives the same sectors on the same version of Node; a different JavaScript engine can round a few flights differently and pick different candidates. That is why the output is committed rather than rebuilt in CI, and why CI checks the committed sectors instead.
 
-To change the campaign, edit the `ARCS` table at the top of `tools/generate-sectors.js`: body line-ups, relay count and size, how far the path must turn, how forgiving the solution must be, and the win-share band.
+To change the campaign, edit the `ARCS` table at the top of `tools/generate-sectors.js`: body line-ups, relay count and size, how far the path must turn, how forgiving the solution must be, whether decoys are allowed, and the win-share band.
 
 ## Adding a sector by hand
 
