@@ -1,5 +1,7 @@
-// Eight handcrafted star systems. World is 1200 x 720; hintAngle is in screen degrees (0 = right, 90 = down).
-// `npm run check` brute-forces every launch to prove each sector can be cleared in one shot.
+// The eight handcrafted star systems that open the campaign; sectors-generated.js adds 009-100.
+// World is 1200 x 720. Angles are screen degrees (0 = right, 90 = down), speeds are px/s.
+//   hintAngle / hintSpeed  where the aim starts if you press LAUNCH or an arrow key before dragging
+//   solution               one launch known to clear the sector; `npm run check` re-flies it
 (function (root) {
   'use strict';
 
@@ -7,10 +9,12 @@
     {
       id: 1,
       name: 'KEPLER BEND',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'GRAVITY ASSIST AROUND SOL-1 TO LOCK DEEP RELAY',
       probe: { x: 170, y: 430 },
       hintAngle: -48,
       hintSpeed: 280,
+      solution: { angle: 11.94, speed: 484.5 },
       bodies: [
         { x: 600, y: 340, r: 44, mass: 130, type: 'star', label: 'SOL-A' }
       ],
@@ -21,10 +25,12 @@
     {
       id: 2,
       name: 'OBERTH SLINGSHOT',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'DIVE INTO GAS GIANT WELL TO WHIP ACROSS DUAL RELAYS',
       probe: { x: 175, y: 520 },
       hintAngle: -58,
       hintSpeed: 330,
+      solution: { angle: 305.94, speed: 375.8 },
       bodies: [
         { x: 580, y: 310, r: 46, mass: 175, type: 'giant', ring: true, tilt: -0.32, label: 'JOVE-IV' }
       ],
@@ -36,10 +42,12 @@
     {
       id: 3,
       name: 'LAGRANGE CORRIDOR',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'THREAD THE L1 SADDLE BETWEEN TWIN STARS',
       probe: { x: 150, y: 360 },
       hintAngle: -6,
       hintSpeed: 315,
+      solution: { angle: 354.75, speed: 429.8 },
       bodies: [
         { x: 510, y: 185, r: 36, mass: 120, type: 'star', label: 'ALPHA-N' },
         { x: 510, y: 535, r: 36, mass: 120, type: 'star', label: 'ALPHA-S' },
@@ -53,10 +61,12 @@
     {
       id: 4,
       name: 'FIGURE-EIGHT TRANSFER',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'CROSS THE BINARY SADDLE FOR A FREE-RETURN S-CURVE',
       probe: { x: 150, y: 505 },
       hintAngle: -52,
       hintSpeed: 295,
+      solution: { angle: 64.63, speed: 212.3 },
       bodies: [
         { x: 435, y: 360, r: 38, mass: 135, type: 'giant', ring: true, tilt: 0.28, label: 'HELIOS-B' },
         { x: 800, y: 360, r: 40, mass: 145, type: 'star', label: 'HELIOS-A' }
@@ -69,10 +79,12 @@
     {
       id: 5,
       name: 'ROCHE LIMIT',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'SKIM PAST THE SINGULARITY USING THE OUTER GAS GIANT',
       probe: { x: 150, y: 410 },
       hintAngle: -47,
       hintSpeed: 375,
+      solution: { angle: 95.5, speed: 200.3 },
       bodies: [
         { x: 540, y: 375, r: 26, mass: 150, type: 'hazard', label: 'PSR-X9' },
         { x: 650, y: 175, r: 34, mass: 115, type: 'giant', label: 'VESTA' }
@@ -85,10 +97,12 @@
     {
       id: 6,
       name: 'TRIPLE RESONANCE',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'CHAIN THREE GRAVITY WELLS IN ONE CONTINUOUS ARC',
       probe: { x: 140, y: 495 },
       hintAngle: -59,
       hintSpeed: 365,
+      solution: { angle: 302.31, speed: 383.3 },
       bodies: [
         { x: 405, y: 275, r: 34, mass: 115, type: 'giant', label: 'TRITON' },
         { x: 660, y: 470, r: 36, mass: 130, type: 'star', label: 'CYGNUS' },
@@ -103,10 +117,12 @@
     {
       id: 7,
       name: 'BINARY REBOUND',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'EXECUTE A 180° BINARY BOOMERANG RETURN TRANSFER',
       probe: { x: 240, y: 220 },
       hintAngle: -20,
       hintSpeed: 290,
+      solution: { angle: 101.56, speed: 162 },
       bodies: [
         { x: 730, y: 290, r: 34, mass: 145, type: 'star', label: 'CASTOR' },
         { x: 730, y: 450, r: 34, mass: 145, type: 'star', label: 'POLLUX' }
@@ -119,10 +135,12 @@
     {
       id: 8,
       name: 'VOYAGER GRAND TOUR',
+      arc: 'THE ORIGINAL EIGHT',
       brief: 'FOUR-BODY DEEP SPACE ALIGNMENT ACROSS THE OUTER SYSTEM',
       probe: { x: 125, y: 520 },
       hintAngle: -63,
       hintSpeed: 290,
+      solution: { angle: 227.94, speed: 153 },
       bodies: [
         { x: 350, y: 365, r: 34, mass: 120, type: 'star', label: 'SOL-PRIME' },
         { x: 605, y: 215, r: 36, mass: 130, type: 'giant', ring: true, tilt: 0.24, label: 'SATURNUS' },

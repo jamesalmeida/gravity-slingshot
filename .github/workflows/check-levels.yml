@@ -14,6 +14,6 @@ jobs:
         with:
           node-version: 22
       - name: Syntax check
-        run: for f in src/*.js tools/*.js; do node --check "$f"; done
-      - name: Prove every level is solvable
+        run: for f in src/*.js tools/*.js tools/lib/*.js; do node --check "$f"; done
+      - name: Prove every sector is solvable
         run: npm run check

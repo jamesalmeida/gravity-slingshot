@@ -1,5 +1,5 @@
 // Voyager Slingshot: state, input, HUD, flight loop and Canvas 2D rendering.
-// Physics lives in physics.js, sector data in sectors.js, sound in audio.js.
+// Physics lives in physics.js, sector data in sectors.js and sectors-generated.js, sound in audio.js.
 (() => {
   'use strict';
 
@@ -18,8 +18,13 @@
     gold: '#F59E0B',
     indigo: '#6366F1',
     rose: '#F43F5E',
-    emerald: '#10B981'
+    emerald: '#10B981',
+    fuchsia: '#E879F9' // repulsors: the only bodies that push
   };
+
+  const STORAGE_KEY = 'voyager-slingshot.progress.v1';
+  const ID_WIDTH = String(SECTORS.length).length;
+  const fmtId = (id) => String(id).padStart(Math.max(2, ID_WIDTH), '0');
 
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   let prefersReducedMotion = reducedMotionQuery.matches;
@@ -37,6 +42,14 @@
     sectorCode: document.getElementById('sector-code'),
     sectorName: document.getElementById('sector-name'),
     sectorNav: document.getElementById('sector-nav'),
+    btnSectorPrev: document.getElementById('btn-sector-prev'),
+    btnSectorNext: document.getElementById('btn-sector-next'),
+    btnSectorMap: document.getElementById('btn-sector-map'),
+    sectorProgress: document.getElementById('sector-progress'),
+    sectorMap: document.getElementById('sector-map'),
+    sectorMapGroups: document.getElementById('sector-map-groups'),
+    sectorMapReadout: document.getElementById('sector-map-readout'),
+    btnSectorMapClose: document.getElementById('btn-sector-map-close'),
     launches: document.getElementById('tele-launches'),
     dv: document.getElementById('tele-dv'),
     azm: document.getElementById('tele-azm'),
@@ -194,29 +207,102 @@
   // =========================================================================
   // SECTOR LOADING & MISSION FLOW
   // =========================================================================
+  // Progress survives reloads. Storage can be missing or blocked, so every access is guarded.
+  function loadProgress() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      if (!saved) return null;
+      (saved.cleared || []).forEach((id) => {
+        if (id >= 1 && id <= SECTORS.length) state.completed.add(id - 1);
+      });
+      return saved;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        cleared: [...state.completed].map((idx) => idx + 1).sort((x, y) => x - y),
+        last: state.sectorIndex + 1
+      }));
+    } catch (err) {
+      // Progress just won't persist.
+    }
+  }
+
+  // The sector map: every sector as a cell, grouped by arc.
   function buildSectorNav() {
-    ui.sectorNav.innerHTML = '';
+    ui.sectorMapGroups.innerHTML = '';
+    let group = null;
+    let arcName = null;
     SECTORS.forEach((sec, idx) => {
+      if (sec.arc !== arcName) {
+        arcName = sec.arc;
+        const last = SECTORS.filter((o) => o.arc === arcName).length + idx;
+        const section = document.createElement('div');
+        section.className = 'sector-map-arc';
+        const heading = document.createElement('div');
+        heading.className = 'sector-map-arc-title';
+        heading.innerHTML = `<span></span><span class="sector-map-arc-range">${fmtId(sec.id)}–${fmtId(last)}</span>`;
+        heading.firstChild.textContent = arcName || 'SECTORS';
+        group = document.createElement('div');
+        group.className = 'sector-map-grid';
+        section.appendChild(heading);
+        section.appendChild(group);
+        ui.sectorMapGroups.appendChild(section);
+      }
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'sector-btn';
-      btn.textContent = String(sec.id).padStart(2, '0');
+      btn.textContent = fmtId(sec.id);
       btn.setAttribute('aria-label', `Sector ${sec.id}: ${sec.name}`);
-      btn.title = `Sector 0${sec.id}: ${sec.name}`;
+      const describe = () => {
+        ui.sectorMapReadout.textContent = `${fmtId(sec.id)} // ${sec.name}${state.completed.has(idx) ? ' // CLEARED' : ''}`;
+      };
+      btn.addEventListener('pointerenter', describe);
+      btn.addEventListener('focus', describe);
       btn.addEventListener('click', () => {
         SoundEngine.playClick(560);
+        closeSectorMap();
         loadSector(idx);
       });
-      ui.sectorNav.appendChild(btn);
+      group.appendChild(btn);
     });
   }
 
   function updateSectorNavUI() {
-    const buttons = ui.sectorNav.querySelectorAll('.sector-btn');
+    const buttons = ui.sectorMapGroups.querySelectorAll('.sector-btn');
     buttons.forEach((btn, idx) => {
       btn.classList.toggle('active', idx === state.sectorIndex);
       btn.classList.toggle('completed', state.completed.has(idx));
     });
+    ui.sectorProgress.textContent = `${fmtId(state.completed.size)}/${SECTORS.length} CLEARED`;
+  }
+
+  function isSectorMapOpen() {
+    return ui.sectorMap.classList.contains('open');
+  }
+
+  function openSectorMap() {
+    const sec = SECTORS[state.sectorIndex];
+    ui.sectorMap.classList.add('open');
+    ui.btnSectorMap.setAttribute('aria-expanded', 'true');
+    ui.sectorMapReadout.textContent = `${fmtId(sec.id)} // ${sec.name}`;
+    const current = ui.sectorMapGroups.querySelectorAll('.sector-btn')[state.sectorIndex];
+    if (current) {
+      current.focus();
+      current.scrollIntoView({ block: 'center' });
+    }
+  }
+
+  function closeSectorMap() {
+    if (!isSectorMapOpen()) return;
+    ui.sectorMap.classList.remove('open');
+    ui.btnSectorMap.setAttribute('aria-expanded', 'false');
+    ui.btnSectorMap.blur();
+    if (document.activeElement && ui.sectorMap.contains(document.activeElement)) document.activeElement.blur();
   }
 
   function setStatus(text, tone = 'info', duration = 3.2) {
@@ -254,13 +340,18 @@
 
     resetProbeToPad();
 
-    ui.sectorCode.textContent = `SECTOR ${String(sector.id).padStart(2, '0')}/0${SECTORS.length}`;
+    ui.sectorCode.textContent = `SECTOR ${fmtId(sector.id)}/${fmtId(SECTORS.length)}`;
     ui.sectorName.textContent = sector.name;
     ui.modal.classList.remove('open');
 
     updateSectorNavUI();
     updateHUD();
     setStatus(sector.brief, 'info', 4.0);
+
+    // Keep the address shareable and remember where the player left off.
+    const hash = `#sector=${sector.id}${/debug/.test(location.hash) ? '&debug' : ''}`;
+    if (location.hash !== hash) history.replaceState(null, '', hash);
+    saveProgress();
   }
 
   function resetProbeToPad() {
@@ -277,7 +368,8 @@
       launchSpeed: 0,
       peakSpeed: 0,
       frames: 0,
-      trail: []
+      trail: [],
+      path: []
     };
     state.relays.forEach((r) => {
       r.locked = false;
@@ -314,6 +406,7 @@
     state.probe.launchSpeed = speed;
     state.probe.peakSpeed = speed;
     state.probe.trail = [{ x: sector.probe.x, y: sector.probe.y, speed }];
+    state.probe.path = [{ x: sector.probe.x, y: sector.probe.y }];
 
     spawnRing(sector.probe.x, sector.probe.y, PALETTE.cyan, 14, 58, 0.55);
     SoundEngine.playLaunch(speed / MAX_SPEED);
@@ -322,9 +415,19 @@
     updateLaunchButton();
   }
 
+  // The ghost track starts as the predicted path. Once a flight ends it becomes the path the
+  // probe really flew, which can run far past the predictor's range.
+  function keepFlownPath() {
+    const flown = state.probe.path;
+    if (flown && state.ghostPath && flown.length > state.ghostPath.length) {
+      state.ghostPath = flown.concat([{ x: state.probe.x, y: state.probe.y }]);
+    }
+  }
+
   function abortFlight() {
     if (state.phase === 'flight' || state.phase === 'failed') {
       SoundEngine.playClick(300, 0.05);
+      keepFlownPath();
       resetProbeToPad();
       if (state.lastLaunchVec) {
         state.aimVx = state.lastLaunchVec.vx;
@@ -536,6 +639,26 @@
     }
   });
 
+  ui.btnSectorPrev.addEventListener('click', () => {
+    SoundEngine.playClick(520);
+    loadSector(state.sectorIndex - 1, false);
+  });
+  ui.btnSectorNext.addEventListener('click', () => {
+    SoundEngine.playClick(520);
+    loadSector(state.sectorIndex + 1, false);
+  });
+  ui.btnSectorMap.addEventListener('click', () => {
+    SoundEngine.playClick(520);
+    if (isSectorMapOpen()) closeSectorMap(); else openSectorMap();
+  });
+  ui.btnSectorMapClose.addEventListener('click', () => {
+    SoundEngine.playClick(420);
+    closeSectorMap();
+  });
+  ui.sectorMap.addEventListener('pointerdown', (e) => {
+    if (e.target === ui.sectorMap) closeSectorMap(); // click on the dimmed backdrop
+  });
+
   ui.btnReplay.addEventListener('click', () => {
     SoundEngine.playClick(480);
     loadSector(state.sectorIndex, false);
@@ -550,9 +673,19 @@
   window.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    if (e.key >= '1' && e.key <= '8') {
+    if (e.key === 'Escape' && isSectorMapOpen()) {
+      closeSectorMap();
+      return;
+    }
+    if (e.key === 'm' || e.key === 'M') {
       SoundEngine.playClick(520);
-      loadSector(Number(e.key) - 1, false);
+      if (isSectorMapOpen()) closeSectorMap(); else openSectorMap();
+      return;
+    }
+    if (isSectorMapOpen()) return; // the map's own buttons take the keys while it is open
+    if (e.key === '[' || e.key === ']') {
+      SoundEngine.playClick(520);
+      loadSector(state.sectorIndex + (e.key === ']' ? 1 : -1), false);
       return;
     }
     if (e.key === 'r' || e.key === 'R') {
@@ -663,6 +796,7 @@
         const dy = probe.y - b.y;
         if (dx * dx + dy * dy < (b.r + PROBE_RADIUS) * (b.r + PROBE_RADIUS)) {
           state.phase = 'failed';
+          keepFlownPath();
           spawnRing(probe.x, probe.y, PALETTE.rose, 8, 68, 0.75);
           spawnBurst(probe.x, probe.y, PALETTE.rose, 26);
           spawnCallout(probe.x, probe.y - 16, 'HULL IMPACT', PALETTE.rose);
@@ -706,6 +840,7 @@
     // Tapered plasma trail
     probe.trail.push({ x: probe.x, y: probe.y, speed: probe.speed });
     if (probe.trail.length > 92) probe.trail.shift();
+    if (probe.frames % 2 === 0) probe.path.push({ x: probe.x, y: probe.y });
 
     // Oberth slingshot sparks when moving fast near a well
     if (!prefersReducedMotion && probe.speed > probe.launchSpeed * 1.25 && probe.frames % 3 === 0) {
@@ -732,6 +867,7 @@
       probe.frames > MAX_FLIGHT_FRAMES
     ) {
       state.phase = 'failed';
+      keepFlownPath();
       setStatus('SIGNAL LOST // PROBE DRIFTED BEYOND RELAY RANGE', 'warn', 3.5);
       updateLaunchButton();
       return;
@@ -743,6 +879,7 @@
   function completeSector() {
     state.phase = 'complete';
     state.completed.add(state.sectorIndex);
+    saveProgress();
     updateSectorNavUI();
     updateHUD();
     updateLaunchButton();
@@ -757,11 +894,11 @@
       : 'RELAY LOCKED // ORBITAL INSERTION CONFIRMED';
     ui.modalTitle.textContent = isFinal && allCleared
       ? 'GRAND TOUR COMPLETE'
-      : `SECTOR 0${sec.id} CLEARED`;
+      : `SECTOR ${fmtId(sec.id)} CLEARED`;
     ui.modalLaunches.textContent = String(state.launches).padStart(2, '0');
     ui.modalDv.textContent = `${(state.probe.launchSpeed * SPEED_TO_KMS).toFixed(2)} km/s`;
     ui.modalPeak.textContent = `${(state.probe.peakSpeed * SPEED_TO_KMS).toFixed(2)} km/s`;
-    ui.btnNextSector.textContent = isFinal ? 'SECTOR 01 →' : 'NEXT SECTOR →';
+    ui.btnNextSector.textContent = isFinal ? `SECTOR ${fmtId(1)} →` : 'NEXT SECTOR →';
 
     setTimeout(() => {
       if (state.phase === 'complete') {
@@ -921,9 +1058,11 @@
           ? '244, 63, 94'
           : b.type === 'planet'
           ? '56, 189, 248'
+          : b.type === 'repulsor'
+          ? '232, 121, 249'
           : '99, 102, 241';
 
-      const maxR = Math.sqrt(b.mass) * 19.5;
+      const maxR = Math.sqrt(Math.abs(b.mass)) * 19.5;
       const rings = 5;
 
       // Subtle potential field fill
@@ -942,7 +1081,8 @@
         const r = b.r + (maxR - b.r) * (frac * frac * 0.55 + frac * 0.45) + pulse * frac;
         ctx.strokeStyle = `rgba(${baseColor}, ${(0.28 * (1 - frac * 0.72)).toFixed(3)})`;
         ctx.lineWidth = k === 1 ? 1.15 : 0.9;
-        ctx.setLineDash(k % 2 === 0 ? [4, 6] : []);
+        // A repulsor's field is a hill, not a well: every contour is broken.
+        ctx.setLineDash(b.type === 'repulsor' ? [2, 5] : k % 2 === 0 ? [4, 6] : []);
         ctx.beginPath();
         ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
         ctx.stroke();
@@ -953,7 +1093,7 @@
       ctx.font = '600 9.5px Menlo, Consolas, monospace';
       ctx.fillStyle = `rgba(${baseColor}, 0.72)`;
       ctx.textAlign = 'center';
-      ctx.fillText(`${b.label} · μ${(b.mass / 100).toFixed(2)}`, b.x, b.y + b.r + 18);
+      ctx.fillText(`${b.label} · μ${b.mass < 0 ? '−' : ''}${(Math.abs(b.mass) / 100).toFixed(2)}`, b.x, b.y + b.r + 18);
     }
     ctx.restore();
   }
@@ -1023,6 +1163,58 @@
       ctx.beginPath();
       ctx.arc(b.x, b.y, b.r + 7, rot + Math.PI, rot + Math.PI * 1.65);
       ctx.stroke();
+    } else if (b.type === 'repulsor') {
+      // Exotic-matter node: it pushes the probe away. Pale core, fuchsia halo, rings travelling outward.
+      const halo = ctx.createRadialGradient(b.x, b.y, b.r * 0.5, b.x, b.y, b.r * 2.4);
+      halo.addColorStop(0, 'rgba(232, 121, 249, 0.5)');
+      halo.addColorStop(0.45, 'rgba(232, 121, 249, 0.14)');
+      halo.addColorStop(1, 'rgba(232, 121, 249, 0)');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (let k = 0; k < 2; k++) {
+        const phase = prefersReducedMotion ? 0.35 + k * 0.4 : (state.time * 0.55 + k * 0.5) % 1;
+        ctx.strokeStyle = `rgba(232, 121, 249, ${((1 - phase) * 0.55).toFixed(3)})`;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r + phase * b.r * 1.35, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      const core = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+      core.addColorStop(0, '#FDF4FF');
+      core.addColorStop(0.35, '#F5D0FE');
+      core.addColorStop(0.8, '#C026D3');
+      core.addColorStop(1, '#701A75');
+      ctx.fillStyle = core;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = PALETTE.fuchsia;
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Four outward chevrons: the direction of the push
+      ctx.strokeStyle = 'rgba(253, 244, 255, 0.85)';
+      ctx.lineWidth = 1.4;
+      for (let k = 0; k < 4; k++) {
+        const a = (Math.PI / 2) * k + Math.PI / 4;
+        const cx = Math.cos(a);
+        const cy = Math.sin(a);
+        const tip = b.r * 0.72;
+        const back = b.r * 0.4;
+        const wing = b.r * 0.24;
+        ctx.beginPath();
+        ctx.moveTo(b.x + cx * back - cy * wing, b.y + cy * back + cx * wing);
+        ctx.lineTo(b.x + cx * tip, b.y + cy * tip);
+        ctx.lineTo(b.x + cx * back + cy * wing, b.y + cy * back - cx * wing);
+        ctx.stroke();
+      }
     } else {
       // Gas giant (indigo) or ice planet (cyan-indigo)
       // Compute light direction from nearest star if present
@@ -1529,8 +1721,17 @@
   buildSectorNav();
   updateViewport();
   // `#sector=N` opens a sector directly; `#debug` exposes internals for browser tests.
-  const fromHash = Number((location.hash.match(/sector=(\d+)/) || [])[1]);
-  loadSector(fromHash >= 1 && fromHash <= SECTORS.length ? fromHash - 1 : 0);
+  const sectorFromHash = () => {
+    const id = Number((location.hash.match(/sector=(\d+)/) || [])[1]);
+    return id >= 1 && id <= SECTORS.length ? id - 1 : -1;
+  };
+  const saved = loadProgress();
+  const resume = saved && saved.last >= 1 && saved.last <= SECTORS.length ? saved.last - 1 : 0;
+  loadSector(sectorFromHash() >= 0 ? sectorFromHash() : resume);
+  window.addEventListener('hashchange', () => {
+    const idx = sectorFromHash();
+    if (idx >= 0 && idx !== state.sectorIndex) loadSector(idx);
+  });
   if (/debug/.test(location.hash)) window.__vs = { state, SECTORS };
 
   window.addEventListener('resize', updateViewport);
