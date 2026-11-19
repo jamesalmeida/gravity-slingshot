@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A one-shot orbital puzzle: slingshot a probe through gravity wells to light every beacon.">
+  <meta name="theme-color" content="#0a0c18">
+  <title>Gravity Slingshot</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='17' r='7' fill='%23f2a65a'/%3E%3Cpath d='M3 26C10 4 26 4 29 10' fill='none' stroke='%237ee0c3' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <canvas id="field" aria-label="Play field. Drag back from the probe to aim, release to launch."></canvas>
+
+  <header class="topbar">
+    <div class="title-block">
+      <h1>Gravity Slingshot</h1>
+      <button type="button" class="level-button" id="level-button" aria-haspopup="dialog" aria-controls="level-menu">
+        <span id="level-number">1</span>
+        <span class="dot" aria-hidden="true">·</span>
+        <span id="level-name">First Light</span>
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <dl class="readouts">
+      <div><dt>Launches</dt><dd id="ro-launches">0</dd></div>
+      <div><dt>Speed</dt><dd id="ro-speed">0</dd></div>
+      <div><dt>Heading</dt><dd id="ro-heading">0°</dd></div>
+      <div><dt>Beacons</dt><dd id="ro-beacons">0/1</dd></div>
+    </dl>
+  </header>
+
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <footer class="bottombar">
+    <p class="brief" id="brief"></p>
+    <div class="controls">
+      <button type="button" class="btn" id="btn-reset" title="Reset level (R)">Reset</button>
+      <button type="button" class="btn" id="btn-grid" aria-pressed="true" title="Toggle spacetime grid (G)">Grid</button>
+      <button type="button" class="btn" id="btn-hint" title="Show a hint (H)" disabled>Hint</button>
+      <button type="button" class="btn" id="btn-sound" aria-pressed="false" title="Toggle sound (M)">Sound off</button>
+      <button type="button" class="btn btn-go" id="btn-launch" title="Launch or abort (Space)">Launch</button>
+    </div>
+  </footer>
+
+  <div class="scrim" id="level-menu" role="dialog" aria-modal="true" aria-labelledby="level-menu-title" hidden>
+    <div class="card">
+      <h2 id="level-menu-title">Levels</h2>
+      <ol class="level-grid" id="level-grid"></ol>
+      <p class="fine">Stars: one launch earns three, two or three launches earn two, more earn one.</p>
+      <div class="card-actions">
+        <button type="button" class="btn" id="btn-close-menu">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="scrim" id="win-card" role="dialog" aria-modal="true" aria-labelledby="win-title" hidden>
+    <div class="card">
+      <p class="kicker" id="win-kicker">Level cleared</p>
+      <h2 id="win-title">First Light</h2>
+      <p class="stars" id="win-stars" aria-label="3 stars">★★★</p>
+      <dl class="win-stats">
+        <div><dt>Launches</dt><dd id="win-launches">1</dd></div>
+        <div><dt>Launch speed</dt><dd id="win-speed">0</dd></div>
+        <div><dt>Top speed</dt><dd id="win-peak">0</dd></div>
+      </dl>
+      <div class="card-actions">
+        <button type="button" class="btn" id="btn-replay">Replay</button>
+        <button type="button" class="btn btn-go" id="btn-next">Next level</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/physics.js"></script>
+  <script src="src/levels.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/game.js"></script>
+</body>
+</html>

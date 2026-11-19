@@ -1,0 +1,14 @@
+{
+  "name": "gravity-slingshot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A one-shot orbital puzzle: slingshot a probe through gravity wells to light every beacon.",
+  "scripts": {
+    "check": "node tools/check-levels.js",
+    "check:fine": "node tools/check-levels.js --fine",
+    "start": "python3 -m http.server 8000"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
