@@ -153,7 +153,7 @@
   const api = {
     WORLD_W, WORLD_H, G, SOFT, FIXED_DT, SUBSTEPS, SUB_DT, MAX_SPEED, MIN_SPEED, DRAG_GAIN,
     SPEED_TO_KMS, PROBE_RADIUS, RELAY_SLOP, PREDICT_FRAMES, MAX_FLIGHT_FRAMES, FLIGHT_MARGIN,
-    computeAccel, stepVerlet, hitsBody, touchesRelay, predict, fly
+    computeAccel, stepVerlet, hitsBody, touchesRelay, launchState, predict, fly
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

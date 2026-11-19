@@ -2,10 +2,12 @@
   "name": "gravity-slingshot",
   "version": "1.0.0",
   "private": true,
-  "description": "Voyager Slingshot: an 8-sector orbital mechanics puzzle with a live symplectic trajectory predictor.",
+  "description": "Voyager Slingshot: a 100-sector orbital mechanics puzzle with a live symplectic trajectory predictor.",
   "scripts": {
     "check": "node tools/check-levels.js",
-    "check:fine": "node tools/check-levels.js --fine",
+    "check:sweep": "node tools/check-levels.js --sweep",
+    "docs:sectors": "node tools/check-levels.js --sweep --report docs/sectors.md",
+    "generate": "node tools/generate-sectors.js && npm run docs:sectors",
     "start": "python3 -m http.server 8000"
   },
   "engines": {

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VOYAGER SLINGSHOT // Deep Space Relay</title>
-  <meta name="description" content="An 8-sector orbital mechanics puzzle: drag a launch vector, read the live predicted trajectory, and slingshot a probe through planetary gravity wells into distant relay beacons.">
+  <meta name="description" content="A 100-sector orbital mechanics puzzle: drag a launch vector, read the live predicted trajectory, and slingshot a probe through planetary gravity wells into distant relay beacons.">
   <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
@@ -24,14 +24,29 @@
         <div class="brand-titles">
           <div class="brand-main">VOYAGER SLINGSHOT</div>
           <div class="brand-sub">
-            <span id="sector-code">SECTOR 01/08</span>
+            <span id="sector-code">SECTOR 001/100</span>
             <span>//</span>
             <span class="sector-name-tag" id="sector-name">KEPLER BEND</span>
           </div>
         </div>
       </div>
 
-      <nav class="sector-nav" id="sector-nav" aria-label="Mission Sectors"></nav>
+      <nav class="sector-nav" id="sector-nav" aria-label="Mission Sectors">
+        <button type="button" class="sector-btn" id="btn-sector-prev" aria-label="Previous sector" title="Previous sector ([)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+        </button>
+        <button type="button" class="sector-btn sector-map-btn" id="btn-sector-map" aria-haspopup="dialog" aria-expanded="false" title="Sector map (M)">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <rect x="2" y="2" width="3" height="3"/><rect x="6.5" y="2" width="3" height="3"/><rect x="11" y="2" width="3" height="3"/>
+            <rect x="2" y="6.5" width="3" height="3"/><rect x="6.5" y="6.5" width="3" height="3"/><rect x="11" y="6.5" width="3" height="3"/>
+            <rect x="2" y="11" width="3" height="3"/><rect x="6.5" y="11" width="3" height="3"/><rect x="11" y="11" width="3" height="3"/>
+          </svg>
+          <span id="sector-progress">00/100 CLEARED</span>
+        </button>
+        <button type="button" class="sector-btn" id="btn-sector-next" aria-label="Next sector" title="Next sector (])">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </nav>
 
       <div class="telemetry-group" aria-live="polite">
         <div class="tele-cell">
@@ -85,6 +100,21 @@
       </section>
     </main>
 
+    <!-- Sector Map: every sector, grouped by arc -->
+    <div id="sector-map" class="sector-map" role="dialog" aria-modal="true" aria-label="Sector map">
+      <div class="sector-map-panel">
+        <div class="sector-map-head">
+          <div>
+            <div class="modal-kicker">DEEP SPACE NETWORK</div>
+            <h2 class="sector-map-title">SECTOR MAP</h2>
+          </div>
+          <button type="button" class="btn" id="btn-sector-map-close" title="Close (Esc)">CLOSE</button>
+        </div>
+        <div class="sector-map-groups" id="sector-map-groups"></div>
+        <div class="sector-map-readout" id="sector-map-readout" aria-live="polite"></div>
+      </div>
+    </div>
+
     <!-- Bottom Mission Control Bar -->
     <footer class="bottom-bar">
       <div class="controls-left">
@@ -132,6 +162,7 @@
 
   <script src="src/physics.js"></script>
   <script src="src/sectors.js"></script>
+  <script src="src/sectors-generated.js"></script>
   <script src="src/audio.js"></script>
   <script src="src/game.js"></script>
 </body>
