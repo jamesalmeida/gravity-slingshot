@@ -2,7 +2,7 @@
   "name": "gravity-slingshot",
   "version": "1.0.0",
   "private": true,
-  "description": "Voyager Slingshot: a 100-sector orbital mechanics puzzle with a live symplectic trajectory predictor.",
+  "description": "One Shot: a 100-sector orbital mechanics puzzle with a live symplectic trajectory predictor.",
   "scripts": {
     "check": "node tools/check-levels.js && node tools/export-ios.js --check",
     "check:sweep": "node tools/check-levels.js --sweep",

@@ -1,7 +1,7 @@
 # The Xcode project is generated from this file: run `xcodegen` in this folder after adding,
-# moving or removing source files. VoyagerSlingshot.xcodeproj is committed so the app opens in
+# moving or removing source files. OneShot.xcodeproj is committed so the app opens in
 # Xcode without XcodeGen installed.
-name: VoyagerSlingshot
+name: OneShot
 options:
   # GSV iOS conventions: /Users/james/dev/AGENTS.md and agent-playbooks ios/README.md.
   bundleIdPrefix: com.gsv
@@ -29,24 +29,24 @@ settings:
     CURRENT_PROJECT_VERSION: "2026.11.19.1"
     MARKETING_VERSION: "1.0"
 targets:
-  VoyagerSlingshot:
+  OneShot:
     type: application
     platform: iOS
     sources:
-      - path: VoyagerSlingshot
+      - path: OneShot
         excludes:
           - "Resources/RELEASE-NOTES.md"
       # GSVAbout reads this from the app bundle.
-      - path: VoyagerSlingshot/Resources/RELEASE-NOTES.md
+      - path: OneShot/Resources/RELEASE-NOTES.md
         buildPhase: resources
     dependencies:
       - package: SlingshotCore
       - package: GSVKit
         product: GSVAbout
     info:
-      path: VoyagerSlingshot/Info.plist
+      path: OneShot/Info.plist
       properties:
-        CFBundleDisplayName: Voyager Slingshot
+        CFBundleDisplayName: One Shot
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSRequiresIPhoneOS: true
@@ -68,15 +68,15 @@ targets:
           - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.gsv.voyagerslingshot
-        PRODUCT_NAME: Voyager Slingshot
+        PRODUCT_BUNDLE_IDENTIFIER: com.gsv.oneshot
+        PRODUCT_NAME: One Shot
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
 schemes:
-  VoyagerSlingshot:
+  OneShot:
     build:
       targets:
-        VoyagerSlingshot: all
+        OneShot: all
     run:
       config: Debug

@@ -1,4 +1,4 @@
-# Voyager Slingshot // Deep Space Relay
+# One Shot: Gravity Puzzles
 
 A minimalist orbital mechanics puzzle. Drag back from the probe to stretch a launch vector, watch the live predicted orbit curve through every gravity well, then release to slingshot the probe into the emerald relay beacons across 100 star systems: the 8 handcrafted originals, then 92 more in nine arcs that each add an idea and get harder.
 

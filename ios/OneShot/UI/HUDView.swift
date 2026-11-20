@@ -197,7 +197,7 @@ private struct BrandBlock: View {
                 .minimumScaleFactor(0.7)
             } else {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("VOYAGER SLINGSHOT")
+                    Text("ONE SHOT")
                         .font(.system(size: 14, weight: .bold))
                         .tracking(2.2)
                         .foregroundStyle(Theme.white)

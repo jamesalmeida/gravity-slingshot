@@ -1,4 +1,4 @@
-# Voyager Slingshot release notes
+# One Shot release notes
 
 Newest first. Bundled with the app and shown in Settings → Build → Release notes.
 

@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "55A90A6C90124E70F28E6016"
-               BuildableName = "VoyagerSlingshot.app"
-               BlueprintName = "VoyagerSlingshot"
-               ReferencedContainer = "container:VoyagerSlingshot.xcodeproj">
+               BlueprintIdentifier = "90AC37292F1F961D863303DE"
+               BuildableName = "OneShot.app"
+               BlueprintName = "OneShot"
+               ReferencedContainer = "container:OneShot.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "55A90A6C90124E70F28E6016"
-            BuildableName = "VoyagerSlingshot.app"
-            BlueprintName = "VoyagerSlingshot"
-            ReferencedContainer = "container:VoyagerSlingshot.xcodeproj">
+            BlueprintIdentifier = "90AC37292F1F961D863303DE"
+            BuildableName = "OneShot.app"
+            BlueprintName = "OneShot"
+            ReferencedContainer = "container:OneShot.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "55A90A6C90124E70F28E6016"
-            BuildableName = "VoyagerSlingshot.app"
-            BlueprintName = "VoyagerSlingshot"
-            ReferencedContainer = "container:VoyagerSlingshot.xcodeproj">
+            BlueprintIdentifier = "90AC37292F1F961D863303DE"
+            BuildableName = "OneShot.app"
+            BlueprintName = "OneShot"
+            ReferencedContainer = "container:OneShot.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "55A90A6C90124E70F28E6016"
-            BuildableName = "VoyagerSlingshot.app"
-            BlueprintName = "VoyagerSlingshot"
-            ReferencedContainer = "container:VoyagerSlingshot.xcodeproj">
+            BlueprintIdentifier = "90AC37292F1F961D863303DE"
+            BuildableName = "OneShot.app"
+            BlueprintName = "OneShot"
+            ReferencedContainer = "container:OneShot.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -1,4 +1,4 @@
-// Voyager Slingshot: state, input, HUD, flight loop and Canvas 2D rendering.
+// One Shot: state, input, HUD, flight loop and Canvas 2D rendering.
 // Physics lives in physics.js, sector data in sectors.js and sectors-generated.js, sound in audio.js.
 (() => {
   'use strict';

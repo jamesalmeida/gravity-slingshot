@@ -1,4 +1,4 @@
-# Voyager Slingshot for iOS
+# One Shot: Gravity Puzzles for iOS
 
 A native Swift version of the game for iPhone, iPad and iPhone Duo. It is a rewrite, not a wrapped web page: SwiftUI for the interface and a SwiftUI `Canvas` for the playfield. Its only dependency is the shared GSV kit.
 
@@ -6,7 +6,7 @@ The web game in the repo root is unchanged. Both versions play the same 100 sect
 
 ## Open and run
 
-Open `VoyagerSlingshot.xcodeproj` in Xcode, pick a simulator or device, and run. Needs iOS 26 or later.
+Open `OneShot.xcodeproj` in Xcode, pick a simulator or device, and run. Needs iOS 26 or later.
 
 ## GSV conventions
 
@@ -14,14 +14,14 @@ This app follows the GSV iOS conventions in `/Users/james/dev/AGENTS.md` and [ag
 
 | Setting | Value |
 |---|---|
-| Bundle ID | `com.gsv.voyagerslingshot` |
+| Bundle ID | `com.gsv.oneshot` |
 | Team | `WZRRA4NFBY`, automatic signing |
 | Version | Marketing `1.0`; build `YYYY.MM.DD.N` (now `2026.11.19.1`). Bump the build before every archive and never let Xcode manage it |
 | Deployment target | iOS 26.0, as the shared kit requires |
 | Shared kit | [gsv-ios-kit](https://github.com/jamesalmeida/gsv-ios-kit) by git tag (`exactVersion`), product `GSVAbout` |
 | Orientations | All four, on iPhone and iPad |
 
-Settings (bottom of the sector map) ends with the kit's Build section: version, build number and release notes. The notes are read from `VoyagerSlingshot/Resources/RELEASE-NOTES.md`; add an entry headed `## <build> — <date>` for each build.
+Settings (bottom of the sector map) ends with the kit's Build section: version, build number and release notes. The notes are read from `OneShot/Resources/RELEASE-NOTES.md`; add an entry headed `## <build> — <date>` for each build.
 
 Not set up yet, from the day-one checklist: the App ID is not registered, there is no App Store Connect app, and there is no `scripts/archive-testflight.sh` or `docs/TESTFLIGHT-RELEASE.md`.
 
@@ -33,11 +33,11 @@ Not set up yet, from the day-one checklist: the App ID is not registered, there 
 | `SlingshotCore/Sources/SlingshotCore/Physics.swift` | The integrator and predictor, ported line for line from `src/physics.js` |
 | `SlingshotCore/Sources/SlingshotCore/Resources/sectors.json` | All 100 sectors, exported from the web game. Not edited by hand |
 | `SlingshotCore/Tests/` | Tests that replay flights computed by the JavaScript |
-| `VoyagerSlingshot/Game/GameModel.swift` | Game state and rules: aiming, launching, the 60 Hz flight loop, effects |
-| `VoyagerSlingshot/Render/SpaceRenderer.swift` | Draws each frame, in the same order and colours as the web game |
-| `VoyagerSlingshot/Render/FieldLayout.swift` | Chooses where the playfield goes for the current window size |
-| `VoyagerSlingshot/UI/` | The HUD, sector map, "sector cleared" card and Settings |
-| `VoyagerSlingshot/Audio/SoundEngine.swift` | Procedural sound, the same oscillator cues as the web game |
+| `OneShot/Game/GameModel.swift` | Game state and rules: aiming, launching, the 60 Hz flight loop, effects |
+| `OneShot/Render/SpaceRenderer.swift` | Draws each frame, in the same order and colours as the web game |
+| `OneShot/Render/FieldLayout.swift` | Chooses where the playfield goes for the current window size |
+| `OneShot/UI/` | The HUD, sector map, "sector cleared" card and Settings |
+| `OneShot/Audio/SoundEngine.swift` | Procedural sound, the same oscillator cues as the web game |
 | `project.yml` | The XcodeGen description the Xcode project is generated from |
 
 ## One set of sectors, two games

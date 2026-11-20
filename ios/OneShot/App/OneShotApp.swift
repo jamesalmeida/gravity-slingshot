@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct VoyagerSlingshotApp: App {
+struct OneShotApp: App {
     var body: some Scene {
         WindowGroup {
             GameView()
