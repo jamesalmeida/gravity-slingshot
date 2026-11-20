@@ -6,6 +6,8 @@ A minimalist orbital mechanics puzzle. Drag back from the probe to stretch a lau
 
 No build step and no dependencies: plain HTML, CSS and JavaScript on a high-DPI Canvas 2D.
 
+There is also a native Swift version for iPhone, iPad and iPhone Duo in [`ios/`](ios/README.md). It plays the same sectors with the same physics.
+
 ## Run locally
 
 Open `index.html` in a browser, or serve the folder:
@@ -59,6 +61,8 @@ Every sector's measured difficulty is in [docs/sectors.md](docs/sectors.md). How
 | `tools/generate-sectors.js` | Seeded generator for sectors 009–100 |
 | `tools/check-levels.js` | Solver that proves each sector can be cleared in one launch |
 | `tools/lib/analyze.js` | Flight analysis shared by the two tools: sweeps, aiming tolerance, difficulty |
+| `tools/export-ios.js` | Exports the sectors and reference flights to the Swift app |
+| `ios/` | The native iOS app. See [ios/README.md](ios/README.md) |
 
 The predictor, the live flight and the solver all step the same integrator, so the predicted path is exactly what flies.
 
@@ -66,6 +70,8 @@ The predictor, the live flight and the solver all step the same integrator, so t
 npm run check        # re-fly every sector's recorded solution, about a second
 npm run check:sweep  # fly every launch (0.5° × 6 px/s grid) for all 100 sectors, about a minute
 npm run generate     # rebuild sectors 009–100 and docs/sectors.md, about 15 minutes
+npm run export:ios   # copy the sectors to the iOS app after changing any of them
+npm run test:ios     # check the Swift physics against the JavaScript physics
 ```
 
 Each sector records one launch known to clear it. CI re-flies all 100 on every push, so a physics or level change that breaks a sector fails the build. The sweep reports how many launches clear each sector, plus the most forgiving one.

@@ -4,10 +4,12 @@
   "private": true,
   "description": "Voyager Slingshot: a 100-sector orbital mechanics puzzle with a live symplectic trajectory predictor.",
   "scripts": {
-    "check": "node tools/check-levels.js",
+    "check": "node tools/check-levels.js && node tools/export-ios.js --check",
     "check:sweep": "node tools/check-levels.js --sweep",
     "docs:sectors": "node tools/check-levels.js --sweep --report docs/sectors.md",
-    "generate": "node tools/generate-sectors.js && npm run docs:sectors",
+    "generate": "node tools/generate-sectors.js && npm run docs:sectors && npm run export:ios",
+    "export:ios": "node tools/export-ios.js",
+    "test:ios": "swift test --package-path ios/SlingshotCore",
     "start": "python3 -m http.server 8000"
   },
   "engines": {
