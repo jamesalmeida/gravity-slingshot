@@ -50,19 +50,31 @@ function fly(sector, vx, vy) {
 }
 
 // The recorded solution plus four fixed-seed launches per sector.
+//
+// This file must come out identical on every machine, or the staleness check would fail in CI.
+// The physics is safe: it uses only + - * / and square root, which every IEEE 754 machine
+// computes identically. Sine and cosine are not: their last bit differs between JavaScript
+// engines. So launch velocities never come straight from trigonometry. The random ones are
+// built from arithmetic alone, and the solution's is snapped to a 1/1024 px/s grid, which
+// absorbs a last-bit difference and is far finer than any sector's aiming tolerance.
 function referenceFlights() {
   let seed = 20261119;
   const rand = () => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 4294967296;
   };
+  const snap = (v) => Math.round(v * 1024) / 1024;
   const flights = [];
   for (const sector of SECTORS) {
-    const launches = [[sector.solution.angle, sector.solution.speed]];
-    for (let i = 0; i < 4; i++) launches.push([rand() * 360, P.MIN_SPEED + rand() * (P.MAX_SPEED - P.MIN_SPEED)]);
-    for (const [angle, speed] of launches) {
-      const vx = Math.cos((angle * Math.PI) / 180) * speed;
-      const vy = Math.sin((angle * Math.PI) / 180) * speed;
+    const rad = (sector.solution.angle * Math.PI) / 180;
+    const launches = [[snap(Math.cos(rad) * sector.solution.speed), snap(Math.sin(rad) * sector.solution.speed)]];
+    while (launches.length < 5) {
+      const vx = (rand() * 2 - 1) * P.MAX_SPEED;
+      const vy = (rand() * 2 - 1) * P.MAX_SPEED;
+      const speed = Math.sqrt(vx * vx + vy * vy);
+      if (speed >= P.MIN_SPEED && speed <= P.MAX_SPEED) launches.push([vx, vy]);
+    }
+    for (const [vx, vy] of launches) {
       const f = fly(sector, vx, vy);
       const pred = P.predict(sector, vx, vy);
       flights.push({
