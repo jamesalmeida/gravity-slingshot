@@ -121,6 +121,7 @@ final class GameModel {
     private(set) var summary: MissionSummary?
     private(set) var audioOn = false
     var mapOpen = false
+    var settingsOpen = false
 
     var sector: Sector { sectors[sectorIndex] }
 
@@ -256,6 +257,12 @@ final class GameModel {
     func toggleAudio() {
         audioOn.toggle()
         sound.setEnabled(audioOn)
+    }
+
+    func openSettings() {
+        sound.click(520)
+        mapOpen = false
+        settingsOpen = true
     }
 
     // MARK: Aiming and launching

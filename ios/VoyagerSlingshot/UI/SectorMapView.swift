@@ -53,12 +53,21 @@ struct SectorMapView: View {
                     .onAppear { proxy.scrollTo(model.sector.arc, anchor: .center) }
                 }
 
-                Text("\(model.formatID(model.sector.id)) // \(model.sector.name)")
-                    .font(Theme.mono(11))
-                    .tracking(1)
-                    .foregroundStyle(Theme.cyan)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(spacing: 10) {
+                    Text("\(model.formatID(model.sector.id)) // \(model.sector.name)")
+                        .font(Theme.mono(11))
+                        .tracking(1)
+                        .foregroundStyle(Theme.cyan)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button(action: model.openSettings) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "gearshape")
+                            Text("SETTINGS")
+                        }
+                    }
+                    .buttonStyle(HUDButtonStyle())
+                }
                     .padding(.top, 10)
                     .overlay(alignment: .top) { Rectangle().fill(Theme.hudBorderDim).frame(height: 1) }
             }

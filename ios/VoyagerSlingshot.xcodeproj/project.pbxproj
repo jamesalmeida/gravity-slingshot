@@ -11,6 +11,7 @@
 		17D476895B0B7308D9CA7D2E /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D3180D971ED3F1504840C /* Haptics.swift */; };
 		51CAFAD17FC26A93EACB1625 /* FieldLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D150CE767F8B5CD364D1A17C /* FieldLayout.swift */; };
 		6144D015655024E01CF2FE54 /* SlingshotCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BD66923382B0371CDB76F33 /* SlingshotCore */; };
+		63004AA232233C64F700E045 /* GSVAbout in Frameworks */ = {isa = PBXBuildFile; productRef = 286FD5BC9241D312E901EB9A /* GSVAbout */; };
 		64DA3779FD8A0D68CF8AF64B /* SoundEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBCA9C1FEBCA26E1840A2C39 /* SoundEngine.swift */; };
 		74F46F9533E9B01B177AFEE6 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558D3CAEE1C2BB0A01FA8FC6 /* GameView.swift */; };
 		7723F4E08C5A10F6302C91B4 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227EC90E16582439003E6268 /* Theme.swift */; };
@@ -19,6 +20,8 @@
 		963044FBFB5E4FF4E1E91832 /* ProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB55D3027DDD58B8C4A42AE /* ProgressStore.swift */; };
 		9D0FE879811A043A3E9F8CA7 /* SectorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C4E02E3785FC0452F61967 /* SectorMapView.swift */; };
 		D2B15CA713B93956F8836C43 /* HUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0466EBED0BA5736EEB8B2F79 /* HUDView.swift */; };
+		E1D8F34A2BEE52D898814137 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7886B8C04D4251E71A28D4 /* SettingsView.swift */; };
+		EB36ADC1992AE97CE12CBAD1 /* RELEASE-NOTES.md in Resources */ = {isa = PBXBuildFile; fileRef = 7073F866D519379CDF7E2A8C /* RELEASE-NOTES.md */; };
 		F0844F51B5E0E84F9A95AC71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC2D35E21B9EDA2561031A27 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -28,12 +31,14 @@
 		227EC90E16582439003E6268 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		3EB55D3027DDD58B8C4A42AE /* ProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStore.swift; sourceTree = "<group>"; };
 		558D3CAEE1C2BB0A01FA8FC6 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		7073F866D519379CDF7E2A8C /* RELEASE-NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "RELEASE-NOTES.md"; sourceTree = "<group>"; };
 		7A47E6CE0D0713662CACBFC2 /* SpaceRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceRenderer.swift; sourceTree = "<group>"; };
 		8AB8C85149D1417E7C4AFABF /* VoyagerSlingshotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoyagerSlingshotApp.swift; sourceTree = "<group>"; };
 		8B82E7C5B9C1A12C16A9ACDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		906BF3F3E1F938C4F5E297AE /* VoyagerSlingshot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = VoyagerSlingshot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		952D3180D971ED3F1504840C /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		BBCA9C1FEBCA26E1840A2C39 /* SoundEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEngine.swift; sourceTree = "<group>"; };
+		BE7886B8C04D4251E71A28D4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D150CE767F8B5CD364D1A17C /* FieldLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldLayout.swift; sourceTree = "<group>"; };
 		DC2D35E21B9EDA2561031A27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E2FAE8AB178896F4BCBBE89D /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
@@ -46,6 +51,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6144D015655024E01CF2FE54 /* SlingshotCore in Frameworks */,
+				63004AA232233C64F700E045 /* GSVAbout in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +72,7 @@
 				558D3CAEE1C2BB0A01FA8FC6 /* GameView.swift */,
 				0466EBED0BA5736EEB8B2F79 /* HUDView.swift */,
 				05C4E02E3785FC0452F61967 /* SectorMapView.swift */,
+				BE7886B8C04D4251E71A28D4 /* SettingsView.swift */,
 				227EC90E16582439003E6268 /* Theme.swift */,
 			);
 			path = UI;
@@ -130,6 +137,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		D452B2ACC5776227B64DB5ED /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7073F866D519379CDF7E2A8C /* RELEASE-NOTES.md */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		F2E45A4E59C12C3AA6EEFA3F /* VoyagerSlingshot */ = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +154,7 @@
 				3C1EA354362DB2A482F31166 /* Audio */,
 				710DFE35998E0FAFD615B913 /* Game */,
 				5EFE54531E44115D346A1AE0 /* Render */,
+				D452B2ACC5776227B64DB5ED /* Resources */,
 				593BE4F86331F3DD57F7A0B8 /* Support */,
 				5085E8CEC0CA039B8F017A55 /* UI */,
 			);
@@ -163,6 +179,7 @@
 			name = VoyagerSlingshot;
 			packageProductDependencies = (
 				3BD66923382B0371CDB76F33 /* SlingshotCore */,
+				286FD5BC9241D312E901EB9A /* GSVAbout */,
 			);
 			productName = VoyagerSlingshot;
 			productReference = 906BF3F3E1F938C4F5E297AE /* VoyagerSlingshot.app */;
@@ -178,7 +195,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					55A90A6C90124E70F28E6016 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = WZRRA4NFBY;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -193,6 +210,7 @@
 			mainGroup = C196A53A8F47944752BECE8C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				AA247350BAE6697DF53121EA /* XCRemoteSwiftPackageReference "gsv-ios-kit" */,
 				B243ACD54892F1E91B9F34DC /* XCLocalSwiftPackageReference "SlingshotCore" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -211,6 +229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0844F51B5E0E84F9A95AC71 /* Assets.xcassets in Resources */,
+				EB36ADC1992AE97CE12CBAD1 /* RELEASE-NOTES.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,6 +247,7 @@
 				17D476895B0B7308D9CA7D2E /* Haptics.swift in Sources */,
 				963044FBFB5E4FF4E1E91832 /* ProgressStore.swift in Sources */,
 				9D0FE879811A043A3E9F8CA7 /* SectorMapView.swift in Sources */,
+				E1D8F34A2BEE52D898814137 /* SettingsView.swift in Sources */,
 				64DA3779FD8A0D68CF8AF64B /* SoundEngine.swift in Sources */,
 				8AE866097A87121999C6AADD /* SpaceRenderer.swift in Sources */,
 				7723F4E08C5A10F6302C91B4 /* Theme.swift in Sources */,
@@ -271,8 +291,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2026.11.19.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = WZRRA4NFBY;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -283,7 +306,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -291,6 +315,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -300,20 +325,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = VoyagerSlingshot/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamesalmeida.voyagerslingshot;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gsv.voyagerslingshot;
 				PRODUCT_NAME = "Voyager Slingshot";
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -351,8 +371,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2026.11.19.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = WZRRA4NFBY;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -369,7 +392,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -378,6 +402,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -387,20 +412,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = VoyagerSlingshot/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamesalmeida.voyagerslingshot;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gsv.voyagerslingshot;
 				PRODUCT_NAME = "Voyager Slingshot";
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -435,7 +455,23 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		AA247350BAE6697DF53121EA /* XCRemoteSwiftPackageReference "gsv-ios-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jamesalmeida/gsv-ios-kit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.2.26;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		286FD5BC9241D312E901EB9A /* GSVAbout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA247350BAE6697DF53121EA /* XCRemoteSwiftPackageReference "gsv-ios-kit" */;
+			productName = GSVAbout;
+		};
 		3BD66923382B0371CDB76F33 /* SlingshotCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SlingshotCore;

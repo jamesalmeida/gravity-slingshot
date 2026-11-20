@@ -3,21 +3,46 @@
 # Xcode without XcodeGen installed.
 name: VoyagerSlingshot
 options:
+  # GSV iOS conventions: /Users/james/dev/AGENTS.md and agent-playbooks ios/README.md.
+  bundleIdPrefix: com.gsv
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "26.0"
   createIntermediateGroups: true
   generateEmptyDirectories: true
 packages:
   SlingshotCore:
     path: SlingshotCore
+  # Shared GSV kit, always by git tag (never a local path: Xcode cannot open two apps that
+  # share a path package).
+  GSVKit:
+    url: https://github.com/jamesalmeida/gsv-ios-kit.git
+    exactVersion: 0.2.26
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+    DEVELOPMENT_TEAM: "WZRRA4NFBY"
+    CODE_SIGN_STYLE: Automatic
+    # Build numbers are YYYY.MM.DD.N. Bump before every archive; never let Xcode manage it.
+    CURRENT_PROJECT_VERSION: "2026.11.19.1"
+    MARKETING_VERSION: "1.0"
 targets:
   VoyagerSlingshot:
     type: application
     platform: iOS
     sources:
-      - VoyagerSlingshot
+      - path: VoyagerSlingshot
+        excludes:
+          - "Resources/RELEASE-NOTES.md"
+      # GSVAbout reads this from the app bundle.
+      - path: VoyagerSlingshot/Resources/RELEASE-NOTES.md
+        buildPhase: resources
     dependencies:
       - package: SlingshotCore
+      - package: GSVKit
+        product: GSVAbout
     info:
       path: VoyagerSlingshot/Info.plist
       properties:
@@ -33,6 +58,7 @@ targets:
         UIRequiresFullScreen: false
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         UISupportedInterfaceOrientations~ipad:
@@ -42,17 +68,11 @@ targets:
           - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.jamesalmeida.voyagerslingshot
+        PRODUCT_BUNDLE_IDENTIFIER: com.gsv.voyagerslingshot
         PRODUCT_NAME: Voyager Slingshot
-        MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "1"
-        TARGETED_DEVICE_FAMILY: "1,2"
-        SWIFT_VERSION: "5.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
-        DEVELOPMENT_TEAM: ""
-        CODE_SIGN_STYLE: Automatic
 schemes:
   VoyagerSlingshot:
     build:

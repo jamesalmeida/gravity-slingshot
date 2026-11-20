@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "gsv-ios-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jamesalmeida/gsv-ios-kit.git",
+      "state" : {
+        "revision" : "b29f5074ec734109d93f8d2d53939b7e6e9fe7a5",
+        "version" : "0.2.26"
+      }
+    }
+  ],
+  "version" : 2
+}

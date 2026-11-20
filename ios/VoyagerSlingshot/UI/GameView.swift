@@ -38,6 +38,9 @@ struct GameView: View {
             .ignoresSafeArea()
         }
         .background(Theme.obsidian.ignoresSafeArea())
+        .sheet(isPresented: Bindable(model).settingsOpen) {
+            SettingsView(model: model)
+        }
         .focusable()
         .focusEffectDisabled()
         .focused($keyboardFocus)

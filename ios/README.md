@@ -1,14 +1,29 @@
 # Voyager Slingshot for iOS
 
-A native Swift version of the game for iPhone, iPad and iPhone Duo. It is a rewrite, not a wrapped web page: SwiftUI for the interface, a SwiftUI `Canvas` for the playfield, and no third-party dependencies.
+A native Swift version of the game for iPhone, iPad and iPhone Duo. It is a rewrite, not a wrapped web page: SwiftUI for the interface and a SwiftUI `Canvas` for the playfield. Its only dependency is the shared GSV kit.
 
 The web game in the repo root is unchanged. Both versions play the same 100 sectors with the same physics.
 
 ## Open and run
 
-Open `VoyagerSlingshot.xcodeproj` in Xcode, pick a simulator, and run. Needs Xcode with the iOS 17 SDK or later.
+Open `VoyagerSlingshot.xcodeproj` in Xcode, pick a simulator or device, and run. Needs iOS 26 or later.
 
-To run on your own device, select the VoyagerSlingshot target, open Signing & Capabilities, and choose your team. The bundle identifier is `com.jamesalmeida.voyagerslingshot`.
+## GSV conventions
+
+This app follows the GSV iOS conventions in `/Users/james/dev/AGENTS.md` and [agent-playbooks `ios/`](https://github.com/jamesalmeida/agent-playbooks). All of these are set in `project.yml`:
+
+| Setting | Value |
+|---|---|
+| Bundle ID | `com.gsv.voyagerslingshot` |
+| Team | `WZRRA4NFBY`, automatic signing |
+| Version | Marketing `1.0`; build `YYYY.MM.DD.N` (now `2026.11.19.1`). Bump the build before every archive and never let Xcode manage it |
+| Deployment target | iOS 26.0, as the shared kit requires |
+| Shared kit | [gsv-ios-kit](https://github.com/jamesalmeida/gsv-ios-kit) by git tag (`exactVersion`), product `GSVAbout` |
+| Orientations | All four, on iPhone and iPad |
+
+Settings (bottom of the sector map) ends with the kit's Build section: version, build number and release notes. The notes are read from `VoyagerSlingshot/Resources/RELEASE-NOTES.md`; add an entry headed `## <build> — <date>` for each build.
+
+Not set up yet, from the day-one checklist: the App ID is not registered, there is no App Store Connect app, and there is no `scripts/archive-testflight.sh` or `docs/TESTFLIGHT-RELEASE.md`.
 
 ## How it is laid out
 
@@ -21,7 +36,7 @@ To run on your own device, select the VoyagerSlingshot target, open Signing & Ca
 | `VoyagerSlingshot/Game/GameModel.swift` | Game state and rules: aiming, launching, the 60 Hz flight loop, effects |
 | `VoyagerSlingshot/Render/SpaceRenderer.swift` | Draws each frame, in the same order and colours as the web game |
 | `VoyagerSlingshot/Render/FieldLayout.swift` | Chooses where the playfield goes for the current window size |
-| `VoyagerSlingshot/UI/` | The HUD, sector map and "sector cleared" card |
+| `VoyagerSlingshot/UI/` | The HUD, sector map, "sector cleared" card and Settings |
 | `VoyagerSlingshot/Audio/SoundEngine.swift` | Procedural sound, the same oscillator cues as the web game |
 | `project.yml` | The XcodeGen description the Xcode project is generated from |
 
