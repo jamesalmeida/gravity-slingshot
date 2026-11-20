@@ -17,3 +17,12 @@ jobs:
         run: for f in src/*.js tools/*.js tools/lib/*.js; do node --check "$f"; done
       - name: Prove every sector is solvable
         run: npm run check
+
+  ios-core:
+    # The Swift app's physics must match the web game's. This replays 500 flights computed by
+    # the JavaScript and expects the same result, frame and end position from the Swift code.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift physics matches JavaScript physics
+        run: swift test --package-path ios/SlingshotCore
