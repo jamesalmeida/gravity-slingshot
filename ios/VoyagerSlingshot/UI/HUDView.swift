@@ -62,7 +62,7 @@ struct HUDView: View {
                 if layout.narrow {
                     VStack(spacing: 8) {
                         HStack(spacing: 6) {
-                            ControlButtons(model: model, labels: .short)
+                            ControlButtons(model: model, labels: .short, fills: true)
                         }
                         HStack(spacing: 8) {
                             TrimPad(model: model, vertical: false)
@@ -111,7 +111,7 @@ struct HUDView: View {
                 VStack(spacing: 6) {
                     SectorStepper(model: model, showsProgress: true, vertical: true)
                     Spacer(minLength: 0)
-                    ControlButtons(model: model, labels: .iconOnly)
+                    ControlButtons(model: model, labels: .iconOnly, fills: true)
                 }
                 .padding(6)
                 .frame(width: FieldLayout.railWidth)
@@ -353,19 +353,21 @@ private struct ControlButtons: View {
 
     let model: GameModel
     let labels: Labels
+    /// Stretch each button to share the available width.
+    var fills = false
 
     var body: some View {
         Group {
             Button(action: model.resetSector) {
                 content("arrow.counterclockwise", long: "RESET SECTOR", short: "RESET")
             }
-            .buttonStyle(HUDButtonStyle(square: labels == .iconOnly, fillsWidth: labels != .long))
+            .buttonStyle(HUDButtonStyle(square: labels == .iconOnly, fillsWidth: fills))
             .accessibilityLabel("Reset sector")
 
             Button(action: model.toggleWells) {
                 content("circle.dotted.circle", long: "SHOW GRAVITY WELLS", short: "WELLS")
             }
-            .buttonStyle(HUDButtonStyle(tone: model.showWells ? .active : .plain, square: labels == .iconOnly, fillsWidth: labels != .long))
+            .buttonStyle(HUDButtonStyle(tone: model.showWells ? .active : .plain, square: labels == .iconOnly, fillsWidth: fills))
             .accessibilityLabel("Gravity wells")
             .accessibilityValue(model.showWells ? "On" : "Off")
 
@@ -373,7 +375,7 @@ private struct ControlButtons: View {
                 content(model.audioOn ? "speaker.wave.2.fill" : "speaker.slash.fill",
                         long: model.audioOn ? "AUDIO ON" : "AUDIO OFF", short: model.audioOn ? "AUDIO ON" : "AUDIO OFF")
             }
-            .buttonStyle(HUDButtonStyle(tone: model.audioOn ? .active : .plain, square: labels == .iconOnly, fillsWidth: labels != .long))
+            .buttonStyle(HUDButtonStyle(tone: model.audioOn ? .active : .plain, square: labels == .iconOnly, fillsWidth: fills))
             .accessibilityLabel("Audio")
             .accessibilityValue(model.audioOn ? "On" : "Off")
         }
